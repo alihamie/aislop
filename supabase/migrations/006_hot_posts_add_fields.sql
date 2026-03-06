@@ -2,6 +2,8 @@
 -- 006_hot_posts_add_fields.sql
 -- Update get_hot_posts to include title, challenge_id, source_url
 -- ============================================================
+DROP FUNCTION IF EXISTS get_hot_posts(integer, integer);
+
 CREATE OR REPLACE FUNCTION get_hot_posts(p_limit integer DEFAULT 25, p_offset integer DEFAULT 0)
 RETURNS TABLE (
   id uuid,
