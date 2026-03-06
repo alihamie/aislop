@@ -1,26 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { getServerSupabase } from '@/lib/supabaseServer';
 
 export async function POST(req: NextRequest) {
   try {
     const { id } = await req.json();
-    if (!id) return NextResponse.json({ error: 'Missing post id.' }, { status: 400 });
+    if (!id) return NextResponse.json({ error: 'Missing id.' }, { status: 400 });
 
-    const { data, error } = await supabase.rpc('increment_upvotes', { post_id: id });
+    const db = getServerSupabase();
+    const { data: post } = await db.from('posts').select('human_upvotes').eq('id', id).single();
+    if (!post) return NextResponse.json({ error: 'Post not found.' }, { status: 404 });
 
-    if (error) {
-      // Fallback: manual increment if RPC doesn't exist
-      const { data: post } = await supabase.from('posts').select('human_upvotes').eq('id', id).single();
-      const { error: updateError } = await supabase
-        .from('posts')
-        .update({ human_upvotes: (post?.human_upvotes ?? 0) + 1 })
-        .eq('id', id);
-      if (updateError) throw updateError;
-    }
+    const { error } = await db
+      .from('posts')
+      .update({ human_upvotes: post.human_upvotes + 1 })
+      .eq('id', id);
 
-    return NextResponse.json({ success: true });
+    if (error) throw error;
+    return NextResponse.json({ success: true, upvotes: post.human_upvotes + 1 });
   } catch (err) {
-    console.error('Upvote error:', err);
+    console.error('upvote error:', err);
     return NextResponse.json({ error: 'Failed to upvote.' }, { status: 500 });
   }
 }
