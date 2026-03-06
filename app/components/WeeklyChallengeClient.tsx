@@ -132,23 +132,41 @@ export function WeeklyChallengeClient({ initialChallenge, initialPosts }: Props)
 
   return (
     <>
-      {/* ── Header ─────────────────────────────────────────── */}
-      <div className="mb-6">
-        <p className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-1">
-          ⚔️ Weekly Challenge · {weekLabel}
-        </p>
-        <h1 className="text-3xl font-black tracking-tighter mb-3">
-          This Week:{" "}
-          <span className="text-yellow-400">{initialChallenge.prompt}</span>
-        </h1>
-        <div className="flex flex-wrap items-center gap-4">
-          <ChallengeCountdown />
-          <button
-            onClick={handleEnterChallenge}
-            className="px-5 py-2 bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-black text-sm rounded-xl transition-colors cursor-pointer"
-          >
-            ⚔️ Enter the Challenge
-          </button>
+      {/* ── Hero Banner ─────────────────────────────────────── */}
+      <div className="relative mb-8 rounded-2xl overflow-hidden border-2 border-yellow-400/60">
+        {/* Striped background */}
+        <div className="absolute inset-0 bg-yellow-400/10" style={{
+          backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(250,204,21,0.05) 10px, rgba(250,204,21,0.05) 20px)"
+        }} />
+        <div className="relative p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] font-black uppercase tracking-widest bg-yellow-400 text-zinc-950 px-2 py-0.5 rounded-sm">
+                  ⚔️ Weekly Slop-Off
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+                  {weekLabel}
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tighter text-white mb-1">
+                {initialChallenge.prompt}
+              </h1>
+              <p className="text-sm text-zinc-400 mb-4">
+                Submit the sloppiest AI-generated take on this week&apos;s theme. Community votes decide the winner.
+              </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <ChallengeCountdown />
+                <button
+                  onClick={handleEnterChallenge}
+                  className="px-5 py-2 bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-black text-sm rounded-xl transition-all hover:scale-105 cursor-pointer shadow-lg shadow-yellow-900/30"
+                >
+                  🗑️ Dump Your Slop
+                </button>
+              </div>
+            </div>
+            <div className="text-6xl hidden sm:block">🏆</div>
+          </div>
         </div>
       </div>
 

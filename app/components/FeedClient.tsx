@@ -161,19 +161,20 @@ export default function FeedClient({
         <SignInModal onClose={() => setShowSignInModal(false)} />
       )}
       {/* Sort tabs */}
-      <div className="flex gap-1 mb-6 bg-zinc-900 p-1 rounded-xl border border-zinc-800">
+      <div className="flex gap-1.5 mb-6">
         {TABS.map((tab) => (
           <button
             key={tab.key}
             onClick={() => handleTabChange(tab.key)}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-wide transition-all cursor-pointer border ${
               sort === tab.key
-                ? "bg-zinc-700 text-white shadow-sm"
-                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
+                ? "bg-yellow-400 text-zinc-950 border-yellow-400 shadow-lg shadow-yellow-900/30 scale-[1.03]"
+                : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-600 hover:text-zinc-200"
             }`}
           >
-            <span>{tab.icon}</span>
-            <span>{tab.label}</span>
+            <span className="text-base">{tab.icon}</span>
+            <span className="hidden sm:inline">{tab.label}</span>
+            <span className="sm:hidden">{tab.label.split(" ")[0]}</span>
           </button>
         ))}
       </div>
@@ -198,10 +199,10 @@ export default function FeedClient({
         <div className="text-center py-16">
           <div className="text-6xl mb-4">🗑️</div>
           <h3 className="text-xl font-black text-zinc-300 mb-2 uppercase tracking-wide">
-            Nobody Has Dumped Anything Yet
+            The Dumpster Is Suspiciously Clean
           </h3>
           <p className="text-zinc-500">
-            Be the first disgrace. We believe in you.
+            No slop detected. This is deeply concerning.
           </p>
         </div>
       ) : (
@@ -229,7 +230,7 @@ export default function FeedClient({
             disabled={loading}
             className="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-xl font-medium transition-colors disabled:opacity-50 cursor-pointer border border-zinc-700"
           >
-            {loading ? "Loading..." : "Load More Slop 🗑️"}
+            {loading ? "Sifting through garbage..." : "Load More Slop 🗑️"}
           </button>
         </div>
       )}

@@ -100,46 +100,42 @@ export function VoteButtons({
 
   return (
     <div className="flex items-center gap-2">
-      {/* SLOP! (upvote) */}
+      {/* Certified Slop (upvote) */}
       <button
         onClick={(e) => {
           e.stopPropagation();
           handleVote("slop");
         }}
         disabled={loading}
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wide transition-all cursor-pointer ${
           userVote === "slop"
-            ? "bg-green-600/20 text-green-400 border border-green-500/50 scale-105"
-            : "bg-zinc-800 text-zinc-400 border border-zinc-700 hover:bg-zinc-700 hover:text-green-400"
+            ? "bg-yellow-400/20 text-yellow-400 border border-yellow-400/50 scale-105"
+            : "bg-zinc-800 text-zinc-400 border border-zinc-700 hover:bg-zinc-700 hover:text-yellow-400"
         } ${loading ? "opacity-50" : ""}`}
       >
-        <span className="text-base">🗑️</span>
-        <span>PURE SLOP</span>
-        <span
-          className={`ml-1 ${userVote === "slop" ? "text-green-300" : "text-zinc-500"}`}
-        >
+        <span className="text-base">🫠</span>
+        <span>Certified Slop</span>
+        <span className={`ml-1 font-bold ${userVote === "slop" ? "text-yellow-300" : "text-zinc-500"}`}>
           {upvotes}
         </span>
       </button>
 
-      {/* Nah, too clean (downvote) */}
+      {/* Too Clean (downvote) */}
       <button
         onClick={(e) => {
           e.stopPropagation();
           handleVote("clean");
         }}
         disabled={loading}
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wide transition-all cursor-pointer ${
           userVote === "clean"
-            ? "bg-orange-600/20 text-orange-400 border border-orange-500/50 scale-105"
-            : "bg-zinc-800 text-zinc-400 border border-zinc-700 hover:bg-zinc-700 hover:text-orange-400"
+            ? "bg-zinc-600/30 text-zinc-300 border border-zinc-500/50 scale-105"
+            : "bg-zinc-800 text-zinc-500 border border-zinc-700 hover:bg-zinc-700 hover:text-zinc-300"
         } ${loading ? "opacity-50" : ""}`}
       >
-        <span className="text-base">👨‍🍳</span>
-        <span>NOT SLOPPY ENOUGH</span>
-        <span
-          className={`ml-1 ${userVote === "clean" ? "text-orange-300" : "text-zinc-500"}`}
-        >
+        <span className="text-base">🧹</span>
+        <span>Too Clean</span>
+        <span className={`ml-1 font-bold ${userVote === "clean" ? "text-zinc-300" : "text-zinc-600"}`}>
           {downvotes}
         </span>
       </button>
