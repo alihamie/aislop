@@ -75,7 +75,7 @@ export function PostCard({
       )}
 
       {/* Content preview */}
-      <p className="text-zinc-200 text-sm leading-relaxed mb-4 line-clamp-3">
+      <p className="text-zinc-200 text-sm leading-relaxed mb-4 line-clamp-2">
         {post.content}
       </p>
 
@@ -90,7 +90,7 @@ export function PostCard({
           <span className="text-base">🤖</span>
           <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">AI Judge</span>
         </div>
-        <p className={`text-sm font-semibold leading-snug line-clamp-2 ${slopColor}`}>
+        <p className={`text-sm font-semibold leading-snug ${slopColor}`}>
           &ldquo;{post.roast}&rdquo;
         </p>
       </div>
