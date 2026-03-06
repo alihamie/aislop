@@ -41,6 +41,15 @@ export default function RootLayout({
                   </span>
                 </div>
               </Link>
+              <nav className="hidden sm:flex items-center gap-1">
+                <Link
+                  href="/challenge"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition-colors"
+                >
+                  <span>⚔️</span>
+                  <span>Weekly</span>
+                </Link>
+              </nav>
               <div className="flex items-center gap-3">
                 <SlopDumpButton />
                 <AuthButton />

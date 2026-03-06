@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { content, title, turnstileToken } = body;
+    const { content, title, turnstileToken, challenge_id } = body;
 
     log.info("submit.api.start", {
       requestId,
@@ -165,6 +165,29 @@ export async function POST(req: NextRequest) {
     const judged = await judgeText(trimmed);
     log.debug("submit.api.judge_ok", { requestId, score: judged.slop_score });
 
+    // 5b. Validate challenge_id if provided
+    let resolvedChallengeId: string | null = null;
+    if (challenge_id && typeof challenge_id === "string") {
+      const { data: challengeRow, error: challengeErr } = await admin
+        .from("challenges")
+        .select("id, week_start")
+        .eq("id", challenge_id)
+        .maybeSingle();
+
+      if (challengeErr || !challengeRow) {
+        return fail(400, "CHALLENGE_NOT_FOUND", "Invalid challenge. Please try again.");
+      }
+
+      // Ensure the challenge belongs to the current week
+      const todayMonday = getThisMonday();
+      const challengeMonday = new Date(challengeRow.week_start + "T00:00:00Z");
+      if (challengeMonday.getTime() !== todayMonday.getTime()) {
+        return fail(400, "CHALLENGE_EXPIRED", "This challenge is no longer active.");
+      }
+
+      resolvedChallengeId = challengeRow.id;
+    }
+
     // 6. Insert post (using admin to bypass RLS since we already verified auth)
     const { data, error } = await admin
       .from("posts")
@@ -175,6 +198,7 @@ export async function POST(req: NextRequest) {
         slop_score: judged.slop_score,
         verdict: judged.verdict,
         roast: judged.roast,
+        challenge_id: resolvedChallengeId,
       })
       .select()
       .single();
@@ -202,6 +226,7 @@ export async function POST(req: NextRequest) {
       verdict: judged.verdict,
       roast: judged.roast,
       remaining: MAX_POSTS_PER_DAY - postCount - 1,
+      challenge_id: resolvedChallengeId,
     });
   } catch (err) {
     log.error("submit.api.exception", {
@@ -215,4 +240,14 @@ export async function POST(req: NextRequest) {
       error: "Failed to submit. Try again.",
     }, { status: 500 });
   }
+}
+
+/** Returns a JS Date set to the most recent Monday at 00:00 UTC */
+function getThisMonday(): Date {
+  const now = new Date();
+  const day = now.getUTCDay(); // 0=Sun, 1=Mon, ...
+  const diffDays = day === 0 ? 6 : day - 1;
+  return new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - diffDays)
+  );
 }

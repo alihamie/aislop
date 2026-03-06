@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { createRequestId, log } from "@/lib/logger";
 import { Turnstile } from "@marsidev/react-turnstile";
@@ -59,8 +59,26 @@ interface SubmitResult {
   remaining: number;
 }
 
-export default function SubmitPage() {
+function SubmitPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const challengeId = searchParams.get("challenge_id");
+
+  const [challengePrompt, setChallengePrompt] = useState<string | null>(null);
+
+  // Fetch challenge prompt if we were navigated here from the challenge page
+  useEffect(() => {
+    if (!challengeId) return;
+    fetch("/api/challenge/today")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.challenge?.id === challengeId) {
+          setChallengePrompt(data.challenge.prompt);
+        }
+      })
+      .catch(() => {});
+  }, [challengeId]);
+
   const [mode, setMode] = useState<SourceMode>("text");
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
@@ -165,6 +183,7 @@ export default function SubmitPage() {
           content: content.trim(),
           title: title.trim() || undefined,
           turnstileToken,
+          ...(challengeId ? { challenge_id: challengeId } : {}),
         }),
       });
       const data = await res.json();
@@ -289,6 +308,21 @@ export default function SubmitPage() {
           {MAX_POSTS_PER_DAY} dumps per day. Choose disgrace wisely.
         </p>
       </div>
+
+      {/* Challenge banner */}
+      {challengeId && (
+        <div className="mb-6 flex items-center gap-3 bg-yellow-400/10 border border-yellow-400/30 rounded-xl px-4 py-3">
+          <span className="text-xl shrink-0">⚔️</span>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-yellow-400 mb-0.5">
+              Weekly Challenge Entry
+            </p>
+            <p className="text-sm font-semibold text-zinc-200">
+              {challengePrompt ?? "This week's challenge"}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Source selector */}
       <div className="flex gap-2 mb-6 flex-wrap">
@@ -423,5 +457,13 @@ export default function SubmitPage() {
         </button>
       </form>
     </div>
+  );
+}
+
+export default function SubmitPage() {
+  return (
+    <Suspense fallback={<div className="max-w-2xl mx-auto text-center py-20"><div className="animate-pulse text-4xl">🗑️</div></div>}>
+      <SubmitPageContent />
+    </Suspense>
   );
 }

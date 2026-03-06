@@ -37,6 +37,9 @@ export interface Post {
   // Computed (from RPC)
   username?: string;
   hot_score?: number;
+  net_votes?: number;
+  // Challenge association
+  challenge_id?: string | null;
 }
 
 export interface Vote {
@@ -51,6 +54,18 @@ export interface JudgeResult {
   slop_score: number;
   verdict: string;
   roast: string;
+}
+
+export interface Challenge {
+  id: string;
+  week_start: string; // ISO date string (Monday)
+  prompt: string;
+  winner_post_id?: string | null;
+  created_at: string;
+}
+
+export interface ChallengeWithWinner extends Challenge {
+  winner_post?: Post | null;
 }
 
 export function getSlopTier(score: number): SlopTier {
