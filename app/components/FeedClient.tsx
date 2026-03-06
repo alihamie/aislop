@@ -12,7 +12,7 @@ import { SignInModal } from "./SignInModal";
 const PAGE_SIZE = 25;
 
 const TABS: { key: FeedSort; label: string; icon: string }[] = [
-  { key: "hot", label: "Hot Garbage", icon: "🔥" },
+  { key: "hot", label: "Hot Slop", icon: "🔥" },
   { key: "fresh", label: "Fresh Filth", icon: "🆕" },
   { key: "most_slopped", label: "Hall of Shame", icon: "👑" },
 ];
