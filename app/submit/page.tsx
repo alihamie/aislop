@@ -184,7 +184,7 @@ function SubmitPageContent() {
           title: title.trim() || undefined,
           turnstileToken,
           ...(challengeId ? { challenge_id: challengeId } : {}),
-          ...(importUrl.trim() && mode !== "text" ? { source_url: importUrl.trim() } : {}),
+          ...(importUrl.trim() ? { source_url: importUrl.trim() } : {}),
         }),
       });
       const data = await res.json();
@@ -284,6 +284,13 @@ function SubmitPageContent() {
           </div>
         </div>
 
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <TweetVerdictButton
+            postId={result.id}
+            score={result.slop_score}
+            roast={result.roast}
+          />
+        </div>
         <p className="text-zinc-500 text-sm animate-pulse">
           Redirecting to your post...
         </p>
@@ -419,6 +426,22 @@ function SubmitPageContent() {
             </p>
           </div>
         </div>
+
+        {/* Source URL (text mode only) */}
+        {mode === "text" && (
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">
+              Source URL <span className="text-zinc-600 normal-case font-normal">(optional — tweet, LinkedIn post, etc.)</span>
+            </label>
+            <input
+              type="url"
+              value={importUrl}
+              onChange={(e) => setImportUrl(e.target.value)}
+              placeholder="https://twitter.com/..."
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none focus:border-yellow-400/50 transition-colors"
+            />
+          </div>
+        )}
 
         {/* Turnstile */}
         {IS_LOCALHOST ? (

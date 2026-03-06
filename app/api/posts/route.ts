@@ -32,8 +32,10 @@ export async function GET(req: NextRequest) {
       query = query.order("created_at", { ascending: false });
     } else if (sort === "most_slopped") {
       query = query
+        .gte("slop_score", 60)
+        .gte("upvotes", 3)
         .order("upvotes", { ascending: false })
-        .order("created_at", { ascending: false });
+        .order("slop_score", { ascending: false });
     }
 
     const { data, error } = await query;
