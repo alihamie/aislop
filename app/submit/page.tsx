@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase";
 import { createRequestId, log } from "@/lib/logger";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { SlopMeter } from "../components/SlopMeter";
+import { TweetVerdictButton } from "../components/TweetVerdictButton";
 import { getSlopColor } from "@/lib/types";
 import { useAuth } from "../components/AuthProvider";
 
