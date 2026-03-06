@@ -184,6 +184,7 @@ function SubmitPageContent() {
           title: title.trim() || undefined,
           turnstileToken,
           ...(challengeId ? { challenge_id: challengeId } : {}),
+          ...(importUrl.trim() && mode !== "text" ? { source_url: importUrl.trim() } : {}),
         }),
       });
       const data = await res.json();

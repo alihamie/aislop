@@ -34,7 +34,7 @@ export function PostCard({
       onClick={onClick}
       className={`bg-zinc-900 border rounded-xl p-5 hover:border-zinc-600 transition-all cursor-pointer group ${tilt} hover:rotate-0 ${isLegendary ? "border-yellow-400/60 shadow-yellow-900/20 shadow-lg" : "border-zinc-800"}`}
     >
-      {/* Header: username + time + score badge */}
+      {/* Header: username + time + badges */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-full bg-yellow-400/20 flex items-center justify-center text-xs font-bold text-yellow-300">
@@ -43,6 +43,11 @@ export function PostCard({
           <span className="text-sm font-medium text-zinc-300">{username}</span>
         </div>
         <div className="flex items-center gap-2">
+          {post.challenge_id && (
+            <span className="text-[10px] font-black uppercase tracking-widest bg-zinc-800 text-yellow-400 border border-yellow-400/40 px-2 py-0.5 rounded-sm">
+              🏆 CHALLENGE
+            </span>
+          )}
           {isLegendary && (
             <span className="text-[10px] font-black uppercase tracking-widest bg-yellow-400 text-zinc-950 px-2 py-0.5 rounded-sm rotate-[1deg]">
               LEGENDARY
@@ -79,25 +84,39 @@ export function PostCard({
         <SlopMeter score={post.slop_score} size="sm" />
       </div>
 
-      {/* AI Roast */}
-      <div className="mb-4 px-3 py-2 bg-zinc-800/50 rounded-lg border-l-2 border-yellow-400">
-        <p className="text-[10px] font-black uppercase tracking-widest text-yellow-400 mb-1">
-          CLASSIFIED // AI SLOP JUDGE REPORT
-        </p>
-        <p className={`text-xs ${slopColor} italic`}>
+      {/* AI Roast — prominent verdict */}
+      <div className="mb-4 rounded-lg bg-black/40 border border-zinc-700 p-3">
+        <div className="flex items-center gap-1.5 mb-2">
+          <span className="text-base">🤖</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">AI Judge</span>
+        </div>
+        <p className={`text-sm font-semibold leading-snug ${slopColor}`}>
           &ldquo;{post.roast}&rdquo;
         </p>
       </div>
 
-      {/* Vote buttons */}
-      <VoteButtons
-        postId={post.id}
-        upvotes={post.upvotes}
-        downvotes={post.downvotes}
-        userVote={userVote}
-        isAuthenticated={isAuthenticated}
-        onAuthRequired={onAuthRequired}
-      />
+      {/* Source link + votes row */}
+      <div className="flex items-center justify-between gap-2">
+        <VoteButtons
+          postId={post.id}
+          upvotes={post.upvotes}
+          downvotes={post.downvotes}
+          userVote={userVote}
+          isAuthenticated={isAuthenticated}
+          onAuthRequired={onAuthRequired}
+        />
+        {post.source_url && (
+          <a
+            href={post.source_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-1 text-[11px] text-zinc-500 hover:text-zinc-300 transition-colors shrink-0"
+          >
+            🔗 source
+          </a>
+        )}
+      </div>
     </div>
   );
 }

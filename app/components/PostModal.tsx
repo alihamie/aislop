@@ -68,6 +68,11 @@ export function PostModal({
                 {timeAgo(post.created_at)}
               </span>
             </div>
+            {post.challenge_id && (
+              <span className="text-[10px] font-black uppercase tracking-widest bg-zinc-800 text-yellow-400 border border-yellow-400/40 px-2 py-0.5 rounded-sm">
+                🏆 CHALLENGE
+              </span>
+            )}
           </div>
           <button
             onClick={onClose}
@@ -92,14 +97,30 @@ export function PostModal({
           </div>
 
           {/* AI Roast */}
-          <div className="bg-zinc-800/60 border border-yellow-400/20 rounded-xl p-4 mb-6">
-            <p className="text-xs font-bold uppercase tracking-widest text-yellow-400 mb-1">
-              🤖 AI Slop Judge
-            </p>
-            <p className={`${slopColor} font-semibold italic`}>
+          <div className="bg-black/40 border border-zinc-700 rounded-xl p-4 mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xl">🤖</span>
+              <span className="text-xs font-black uppercase tracking-widest text-zinc-500">AI Slop Judge Verdict</span>
+            </div>
+            <p className={`text-base font-bold leading-snug ${slopColor}`}>
               &ldquo;{post.roast}&rdquo;
             </p>
           </div>
+
+          {/* Source link */}
+          {post.source_url && (
+            <div className="mb-6">
+              <a
+                href={post.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-zinc-200 transition-colors border border-zinc-700 hover:border-zinc-500 rounded-lg px-3 py-2"
+              >
+                🔗 <span>View original source</span>
+                <span className="text-zinc-600">↗</span>
+              </a>
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex items-center gap-3 flex-wrap">

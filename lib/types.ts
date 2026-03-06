@@ -40,6 +40,7 @@ export interface Post {
   net_votes?: number;
   // Challenge association
   challenge_id?: string | null;
+  source_url?: string | null;
 }
 
 export interface Vote {

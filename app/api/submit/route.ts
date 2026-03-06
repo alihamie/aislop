@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { content, title, turnstileToken, challenge_id } = body;
+    const { content, title, turnstileToken, challenge_id, source_url } = body;
 
     log.info("submit.api.start", {
       requestId,
@@ -199,6 +199,7 @@ export async function POST(req: NextRequest) {
         verdict: judged.verdict,
         roast: judged.roast,
         challenge_id: resolvedChallengeId,
+        source_url: typeof source_url === "string" && source_url.startsWith("http") ? source_url : null,
       })
       .select()
       .single();
