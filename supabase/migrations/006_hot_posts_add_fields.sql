@@ -38,6 +38,6 @@ RETURNS TABLE (
     p.source_url
   FROM posts p
   JOIN profiles pr ON pr.id = p.user_id
-  ORDER BY hot_score DESC
+  ORDER BY (p.upvotes - p.downvotes + 1.0) / POWER(EXTRACT(EPOCH FROM (now() - p.created_at)) / 3600.0 + 2.0, 1.5) DESC
   LIMIT p_limit OFFSET p_offset;
 $$ LANGUAGE sql SECURITY DEFINER;
