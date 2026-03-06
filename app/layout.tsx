@@ -56,10 +56,28 @@ export default function RootLayout({
               </div>
             </div>
           </header>
-          <main className="max-w-3xl mx-auto px-4 py-8">{children}</main>
-          <footer className="border-t border-zinc-800 mt-16 py-6 text-center text-zinc-600 text-sm">
+          <main className="max-w-3xl mx-auto px-4 py-8 pb-24 sm:pb-8">{children}</main>
+          <footer className="border-t border-zinc-800 mt-16 py-6 text-center text-zinc-600 text-sm hidden sm:block">
             AI Slop — where AI slop goes to be judged and celebrated 🗑️👑
           </footer>
+
+          {/* Mobile bottom nav */}
+          <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-zinc-950/95 backdrop-blur border-t border-zinc-800">
+            <div className="flex items-center justify-around px-2 py-2">
+              <Link href="/" className="flex flex-col items-center gap-0.5 px-4 py-2 rounded-lg text-zinc-400 hover:text-white transition-colors">
+                <span className="text-xl">🗑️</span>
+                <span className="text-[10px] font-bold uppercase tracking-wide">Feed</span>
+              </Link>
+              <Link href="/challenge" className="flex flex-col items-center gap-0.5 px-4 py-2 rounded-lg text-zinc-400 hover:text-white transition-colors">
+                <span className="text-xl">⚔️</span>
+                <span className="text-[10px] font-bold uppercase tracking-wide">Challenge</span>
+              </Link>
+              <Link href="/submit" className="flex flex-col items-center gap-0.5 px-4 py-2 rounded-lg bg-yellow-400 text-zinc-950 hover:bg-yellow-300 transition-colors">
+                <span className="text-xl">＋</span>
+                <span className="text-[10px] font-black uppercase tracking-wide">Dump</span>
+              </Link>
+            </div>
+          </nav>
         </AuthProvider>
       </body>
     </html>
