@@ -25,7 +25,7 @@ export default async function FeedPage() {
 
   return (
     <div>
-      <div className="mb-8 text-center">
+      <div className="hidden sm:block mb-8 text-center">
         <h1 className="text-3xl font-black tracking-tighter mb-2">
           The Slop <span className="text-yellow-400">Feed</span> 🗑️
         </h1>
