@@ -45,8 +45,8 @@ export function PostCard({
         </div>
         <div className="flex items-center gap-2">
           {post.challenge_id && (
-            <span className="text-[10px] font-black uppercase tracking-widest bg-zinc-800 text-yellow-400 border border-yellow-400/40 px-2 py-0.5 rounded-sm">
-              🏆 CHALLENGE
+            <span className="text-[9px] font-black uppercase tracking-widest bg-zinc-800 text-yellow-400 border border-yellow-400/40 px-1.5 py-0.5 rounded-sm">
+              🏆
             </span>
           )}
           {isLegendary && (
