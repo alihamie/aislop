@@ -3,37 +3,8 @@ import { createServerSupabase, createAdminSupabase } from "@/lib/supabaseServer"
 import { judgeText } from "@/lib/judge";
 import { createRequestId, log } from "@/lib/logger";
 
-const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET_KEY!;
 const MAX_POSTS_PER_DAY = 3;
 
-async function verifyTurnstile(token: string) {
-  try {
-    const res = await fetch(
-      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          secret: TURNSTILE_SECRET,
-          response: token,
-        }),
-      }
-    );
-    const data = await res.json();
-    return {
-      ok: data.success === true,
-      status: res.status,
-      errorCodes: (data["error-codes"] as string[] | undefined) ?? [],
-    };
-  } catch (error) {
-    return {
-      ok: false,
-      status: 0,
-      errorCodes: ["turnstile_network_error"],
-      message: error instanceof Error ? error.message : "Unknown",
-    };
-  }
-}
 
 export async function POST(req: NextRequest) {
   const requestId = req.headers.get("x-request-id") ?? createRequestId("submit");
@@ -61,30 +32,12 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { content, title, turnstileToken, challenge_id, source_url } = body;
+    const { content, title, challenge_id, source_url } = body;
 
     log.info("submit.api.start", {
       requestId,
       contentLength: typeof content === "string" ? content.length : 0,
-      hasTurnstileToken: !!turnstileToken,
     });
-
-    // 1. Verify Turnstile (skip on localhost in dev)
-    const isDev = process.env.NODE_ENV === "development";
-    if (!turnstileToken) {
-      return fail(400, "TURNSTILE_REQUIRED", "Bot verification required.");
-    }
-    if (turnstileToken !== "localhost-bypass" || !isDev) {
-      const turnstileResult = await verifyTurnstile(turnstileToken);
-      if (!turnstileResult.ok) {
-        return fail(403, "TURNSTILE_FAILED", "Bot verification failed. Try again.", {
-          turnstileStatus: turnstileResult.status,
-          turnstileErrors: turnstileResult.errorCodes,
-          turnstileMessage: turnstileResult.message,
-        });
-      }
-    }
-    log.debug("submit.api.turnstile_ok", { requestId, isDevBypass: turnstileToken === "localhost-bypass" && isDev });
 
     // 2. Check auth
     const supabase = await createServerSupabase();

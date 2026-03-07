@@ -4,7 +4,6 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { createRequestId, log } from "@/lib/logger";
-import { Turnstile } from "@marsidev/react-turnstile";
 import { SlopMeter } from "../components/SlopMeter";
 import { SlopStampButton } from "../components/SlopStampButton";
 import { getSlopColor } from "@/lib/types";
@@ -15,8 +14,6 @@ const IS_LOCALHOST =
   (window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1");
 
-const TURNSTILE_SITE_KEY =
-  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
 const LOADING_MSGS = [
   "Analyzing slop levels... oh no.",
@@ -89,9 +86,6 @@ function SubmitPageContent() {
   const [loading, setLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState(LOADING_MSGS[0]);
   const [error, setError] = useState("");
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(
-    IS_LOCALHOST ? "localhost-bypass" : null
-  );
   const [result, setResult] = useState<SubmitResult | null>(null);
   const { user, loading: authLoading, authError } = useAuth();
 
@@ -150,10 +144,6 @@ function SubmitPageContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;
-    if (!turnstileToken) {
-      setError("Please complete the verification.");
-      return;
-    }
 
     setLoading(true);
     setError("");
@@ -163,7 +153,6 @@ function SubmitPageContent() {
     log.info("submit.client.start", {
       requestId,
       contentLength: content.trim().length,
-      hasTurnstileToken: !!turnstileToken,
       isLocalhost: IS_LOCALHOST,
     });
 
@@ -183,7 +172,6 @@ function SubmitPageContent() {
         body: JSON.stringify({
           content: content.trim(),
           title: title.trim() || undefined,
-          turnstileToken,
           ...(challengeId ? { challenge_id: challengeId } : {}),
           ...(importUrl.trim() ? { source_url: importUrl.trim() } : {}),
         }),
@@ -444,21 +432,7 @@ function SubmitPageContent() {
           </div>
         )}
 
-        {/* Turnstile */}
-        {IS_LOCALHOST ? (
-          <p className="text-xs text-zinc-500 text-center">
-            🛠️ Turnstile bypassed on localhost
-          </p>
-        ) : (
-          <div className="flex justify-center">
-            <Turnstile
-              siteKey={TURNSTILE_SITE_KEY}
-              onSuccess={(token) => setTurnstileToken(token)}
-              onError={() => setTurnstileToken(null)}
-              onExpire={() => setTurnstileToken(null)}
-            />
-          </div>
-        )}
+
 
         {error && (
           <div className="bg-red-950/50 border border-red-800 text-red-400 rounded-xl px-4 py-3 text-sm">
@@ -468,7 +442,7 @@ function SubmitPageContent() {
 
         <button
           type="submit"
-          disabled={loading || !content.trim() || !turnstileToken}
+          disabled={loading || !content.trim()}
           className="w-full bg-yellow-400 hover:bg-yellow-300 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-950 font-black text-lg py-4 rounded-xl transition-colors cursor-pointer"
         >
           {loading ? (
