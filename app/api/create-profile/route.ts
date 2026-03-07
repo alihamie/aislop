@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabase, createAdminSupabase } from "@/lib/supabaseServer";
 import { log } from "@/lib/logger";
+import { containsProfanity } from "@/lib/profanity";
 
 function validateUsername(name: string): string | null {
   if (name.length < 3) return "Username must be at least 3 characters";
   if (name.length > 20) return "Username must be 20 characters or less";
   if (!/^[a-zA-Z0-9_]+$/.test(name)) return "Only letters, numbers, and underscores allowed";
+  if (containsProfanity(name)) return "That username isn't allowed. Try something else.";
   return null;
 }
 

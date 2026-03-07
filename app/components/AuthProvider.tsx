@@ -13,7 +13,7 @@ import type { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase";
 import type { Profile } from "@/lib/types";
 import { log } from "@/lib/logger";
-import { UsernameModal } from "./UsernameModal";
+import { useRouter, usePathname } from "next/navigation";
 
 interface AuthContextValue {
   user: User | null;
@@ -27,6 +27,8 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const supabase = createClient();
+  const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -119,13 +121,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [authError, loading, profile, user]
   );
 
+  // Redirect to create-username if logged in but no profile, unless already there
+  useEffect(() => {
+    if (!loading && user && !profile && pathname !== "/create-username") {
+      router.replace("/create-username");
+    }
+  }, [loading, user, profile, pathname, router]);
+
   return (
     <AuthContext.Provider value={value}>
       {children}
-      {/* Global username modal — rendered outside AuthButton so it works on mobile too */}
-      {!loading && user && !profile && (
-        <UsernameModal userId={user.id} onComplete={(p) => setProfile(p)} />
-      )}
     </AuthContext.Provider>
   );
 }
