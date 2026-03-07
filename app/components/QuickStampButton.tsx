@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { getSlopTier } from "@/lib/types";
 
 interface QuickStampButtonProps {
   postId: string;
@@ -11,59 +10,74 @@ interface QuickStampButtonProps {
 
 function StampIcon({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {/* Handle */}
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
       <rect x="9" y="2" width="6" height="5" rx="1.5" />
-      {/* Neck */}
       <rect x="10.5" y="7" width="3" height="3" />
-      {/* Base/pad */}
       <rect x="4" y="10" width="16" height="5" rx="1.5" />
-      {/* Ink line */}
       <rect x="3" y="17" width="18" height="2.5" rx="1" opacity="0.5" />
     </svg>
   );
 }
 
-export function QuickStampButton({ postId, score, roast }: QuickStampButtonProps) {
-  const [copied, setCopied] = useState(false);
+async function copyStampImage(postId: string): Promise<"copied" | "shared" | "downloaded"> {
+  const url = `/api/stamp/${postId}`;
 
-  const tier = getSlopTier(score);
-  const truncatedRoast = roast.length > 200 ? roast.slice(0, 199) + "…" : roast;
-  const postUrl = typeof window !== "undefined"
-    ? `${window.location.origin}/post/${postId}`
-    : `https://aislop-eight.vercel.app/post/${postId}`;
+  // 1. Try copy image to clipboard (desktop Chrome/Edge/Safari)
+  try {
+    const blob = await fetch(url).then((r) => r.blob());
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+    return "copied";
+  } catch {
+    // fall through
+  }
 
-  const stampText = `${tier} — ${score}%\n\n"${truncatedRoast}"\n\n🗑️ ${postUrl}`;
+  // 2. Try Web Share API with image file (mobile)
+  try {
+    const blob = await fetch(url).then((r) => r.blob());
+    const file = new File([blob], "slop-stamp.png", { type: "image/png" });
+    if (navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file], title: "My Slop Stamp" });
+      return "shared";
+    }
+  } catch {
+    // fall through
+  }
 
-  const handleCopy = async (e: React.MouseEvent) => {
+  // 3. Fallback: open image for download
+  window.open(url, "_blank");
+  return "downloaded";
+}
+
+export function QuickStampButton({ postId }: QuickStampButtonProps) {
+  const [status, setStatus] = useState<"idle" | "loading" | "done">("idle");
+  const [label, setLabel] = useState("✓");
+
+  const handleStamp = async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    try {
-      await navigator.clipboard.writeText(stampText);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      // ignore
-    }
+    if (status === "loading") return;
+    setStatus("loading");
+
+    const result = await copyStampImage(postId);
+    setLabel(result === "copied" ? "Copied!" : result === "shared" ? "Shared!" : "Saved!");
+    setStatus("done");
+    setTimeout(() => setStatus("idle"), 2000);
   };
 
   return (
     <button
-      onClick={handleCopy}
-      title="Copy Slop Stamp"
+      onClick={handleStamp}
+      title="Copy Slop Stamp image"
       className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer border-2 ${
-        copied
+        status === "done"
           ? "text-yellow-400 bg-yellow-400/10 border-yellow-400"
+          : status === "loading"
+          ? "text-zinc-500 bg-zinc-800 border-zinc-700 animate-pulse"
           : "text-zinc-300 bg-zinc-800 border-zinc-600 hover:text-yellow-400 hover:border-yellow-400 hover:bg-yellow-400/10"
       }`}
     >
-      {copied
-        ? <span className="text-sm font-black">✓</span>
+      {status === "done"
+        ? <span className="text-[9px] font-black leading-none">{label}</span>
         : <StampIcon className="w-5 h-5 shrink-0" />
       }
     </button>
