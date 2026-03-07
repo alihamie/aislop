@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getSlopTier } from "@/lib/types";
 
 interface QuickStampButtonProps {
   postId: string;
@@ -19,47 +20,75 @@ function StampIcon({ className }: { className?: string }) {
   );
 }
 
-async function copyStampImage(postId: string): Promise<"copied" | "shared" | "downloaded"> {
-  const url = `/api/stamp/${postId}`;
-
-  // 1. Try copy image to clipboard (desktop Chrome/Edge/Safari)
-  try {
-    const blob = await fetch(url).then((r) => r.blob());
-    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-    return "copied";
-  } catch {
-    // fall through
-  }
-
-  // 2. Try Web Share API with image file (mobile)
-  try {
-    const blob = await fetch(url).then((r) => r.blob());
-    const file = new File([blob], "slop-stamp.png", { type: "image/png" });
-    if (navigator.canShare?.({ files: [file] })) {
-      await navigator.share({ files: [file], title: "My Slop Stamp" });
-      return "shared";
-    }
-  } catch {
-    // fall through
-  }
-
-  // 3. Fallback: open image for download
-  window.open(url, "_blank");
-  return "downloaded";
+function getTierEmoji(score: number): string {
+  if (score <= 20) return "😬";
+  if (score <= 40) return "🗑️";
+  if (score <= 60) return "💩";
+  if (score <= 80) return "☣️";
+  return "👑";
 }
 
-export function QuickStampButton({ postId }: QuickStampButtonProps) {
-  const [status, setStatus] = useState<"idle" | "loading" | "done">("idle");
-  const [label, setLabel] = useState("✓");
+function makeAsciiStamp(tier: string, score: number, emoji: string, roast: string, url: string): string {
+  const W = 42;
+  const inner = W - 2;
+
+  function pad(text: string): string {
+    const t = text.slice(0, inner - 2);
+    const spaces = inner - t.length;
+    const left = Math.floor(spaces / 2);
+    const right = spaces - left;
+    return "║" + " ".repeat(left) + t + " ".repeat(right) + "║";
+  }
+
+  function wordWrap(text: string, maxW: number): string[] {
+    const words = text.split(" ");
+    const result: string[] = [];
+    let line = "";
+    for (const word of words) {
+      if ((line + " " + word).trim().length <= maxW) {
+        line = (line + " " + word).trim();
+      } else {
+        if (line) result.push(line);
+        line = word;
+      }
+    }
+    if (line) result.push(line);
+    return result;
+  }
+
+  const border = "═".repeat(inner);
+  const roastWrapped = wordWrap(`"${roast}"`, inner - 4);
+  const lines = [
+    "╔" + border + "╗",
+    pad(""),
+    pad(`${emoji}  ${tier}`),
+    pad(`${score}%`),
+    pad(""),
+    ...roastWrapped.map(pad),
+    pad(""),
+    pad(`🗑️ ${url}`),
+    pad(""),
+    "╚" + border + "╝",
+  ];
+  return lines.join("\n");
+}
+
+export function QuickStampButton({ postId, score, roast }: QuickStampButtonProps) {
+  const [status, setStatus] = useState<"idle" | "done">("idle");
 
   const handleStamp = async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    if (status === "loading") return;
-    setStatus("loading");
 
-    const result = await copyStampImage(postId);
-    setLabel(result === "copied" ? "Copied!" : result === "shared" ? "Shared!" : "Saved!");
+    const tier = getSlopTier(score);
+    const emoji = getTierEmoji(score);
+    const url = `${window.location.origin}/post/${postId}`;
+    const stamp = makeAsciiStamp(tier, score, emoji, roast, url);
+
+    try {
+      await navigator.clipboard.writeText(stamp);
+    } catch { /* ignore */ }
+
     setStatus("done");
     setTimeout(() => setStatus("idle"), 2000);
   };
@@ -67,17 +96,15 @@ export function QuickStampButton({ postId }: QuickStampButtonProps) {
   return (
     <button
       onClick={handleStamp}
-      title="Copy Slop Stamp image"
+      title="Copy Slop Stamp"
       className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer border-2 ${
         status === "done"
           ? "text-yellow-400 bg-yellow-400/10 border-yellow-400"
-          : status === "loading"
-          ? "text-zinc-500 bg-zinc-800 border-zinc-700 animate-pulse"
           : "text-zinc-300 bg-zinc-800 border-zinc-600 hover:text-yellow-400 hover:border-yellow-400 hover:bg-yellow-400/10"
       }`}
     >
       {status === "done"
-        ? <span className="text-[9px] font-black leading-none">{label}</span>
+        ? <span className="text-[9px] font-black leading-none">✓</span>
         : <StampIcon className="w-5 h-5 shrink-0" />
       }
     </button>
