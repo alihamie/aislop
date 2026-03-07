@@ -25,13 +25,12 @@ export default async function FeedPage() {
 
   return (
     <div>
-      <div className="hidden sm:block mb-8 text-center">
+      <div className="mb-8 text-center">
         <h1 className="text-3xl font-black tracking-tighter mb-2">
           The Slop <span className="text-yellow-400">Feed</span> 🗑️
         </h1>
-        <p className="text-zinc-400 text-sm">
-          AI-generated garbage, celebrated by the community. The sloppier, the
-          better.
+        <p className="text-zinc-400 text-sm max-w-md mx-auto">
+          AISlop Hub is a community platform for submitting AI-generated content to be rated by our AI Slop Judge. Submit text, tweets, or any URL — get a slop score, a roast, and bragging rights. The sloppier, the better.
         </p>
       </div>
 
