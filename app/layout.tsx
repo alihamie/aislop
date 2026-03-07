@@ -64,7 +64,12 @@ export default function RootLayout({
           </header>
           <main className="max-w-3xl mx-auto px-4 py-8 pb-24 sm:pb-8">{children}</main>
           <footer className="border-t border-zinc-800 mt-16 py-6 text-center text-zinc-600 text-sm hidden sm:block">
-            AI Slop — where AI slop goes to be judged and celebrated 🗑️👑
+            <p className="mb-2">AI Slop — where AI slop goes to be judged and celebrated 🗑️👑</p>
+            <div className="flex items-center justify-center gap-4 text-xs">
+              <Link href="/privacy" className="hover:text-zinc-400 transition-colors">Privacy Policy</Link>
+              <span>·</span>
+              <Link href="/terms" className="hover:text-zinc-400 transition-colors">Terms of Service</Link>
+            </div>
           </footer>
 
           {/* Mobile bottom nav */}
