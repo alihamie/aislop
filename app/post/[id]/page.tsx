@@ -140,7 +140,7 @@ export default async function PostPage({
           {/* AI Roast */}
           <div className="bg-zinc-800/60 border border-yellow-400/20 rounded-xl p-4 mb-6">
             <p className="text-xs font-bold uppercase tracking-widest text-yellow-400 mb-1">
-              🤖 AI Slop Judge
+              🤖 Slop Judge
             </p>
             <p className={`${slopColor} font-semibold italic text-lg`}>
               &ldquo;{post.roast}&rdquo;

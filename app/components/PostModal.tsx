@@ -101,7 +101,7 @@ export function PostModal({
           <div className="bg-black/40 border border-zinc-700 rounded-xl p-4 mb-6">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xl">🤖</span>
-              <span className="text-xs font-black uppercase tracking-widest text-zinc-500">AI Slop Judge Verdict</span>
+              <span className="text-xs font-black uppercase tracking-widest text-zinc-500">Slop Judge Verdict</span>
             </div>
             <p className={`text-base font-bold leading-snug ${slopColor}`}>
               &ldquo;{post.roast}&rdquo;

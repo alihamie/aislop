@@ -95,7 +95,7 @@ export function PostCard({
       <div className="mb-4 rounded-lg bg-black/40 border border-zinc-700 p-3">
         <div className="flex items-center gap-1.5 mb-2">
           <span className="text-base">🤖</span>
-          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">AI Judge</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Slop Judge</span>
         </div>
         <p className={`text-sm font-semibold leading-snug ${slopColor}`}>
           &ldquo;{post.roast}&rdquo;

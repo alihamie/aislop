@@ -265,7 +265,7 @@ function SubmitPageContent() {
 
           <div className="mt-6 bg-zinc-800/60 border border-yellow-400/20 rounded-xl p-4">
             <p className="text-xs font-bold uppercase tracking-widest text-yellow-400 mb-1">
-              🤖 AI Slop Judge
+              🤖 Slop Judge
             </p>
             <p className={`${slopColor} font-semibold italic text-lg`}>
               &ldquo;{result.roast}&rdquo;

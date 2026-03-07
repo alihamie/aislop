@@ -18,7 +18,7 @@ export function TweetVerdictButton({ postId, score, roast, siteUrl }: TweetVerdi
   const maxRoastLen = 160;
   const truncatedRoast = roast.length > maxRoastLen ? roast.slice(0, maxRoastLen - 1) + "…" : roast;
 
-  const tweetText = `Just got rated ${tier} (${score}%) by the AI Slop Judge 🗑️\n\n"${truncatedRoast}"\n\n${postUrl}`;
+  const tweetText = `Just got rated ${tier} (${score}%) by the Slop Judge 🗑️\n\n"${truncatedRoast}"\n\n${postUrl}`;
 
   const handleTweet = (e: React.MouseEvent) => {
     e.stopPropagation();
