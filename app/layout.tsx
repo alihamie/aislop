@@ -10,12 +10,26 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AI Slop — Where AI Slop Gets Celebrated 🗑️",
+  title: "AISlop Hub — Where AI Slop Gets Judged 🗑️",
   description:
-    "Paste your AI-generated slop. Get rated by the Slop-o-Meter. Compete for the sloppiest post.",
+    "Submit AI-generated content, get roasted by the Slop Judge, and let the community vote. The sloppier, the better.",
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://aitrash.vercel.app"
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://aislophub.ai"
   ),
+  openGraph: {
+    title: "AISlop Hub — Where AI Slop Gets Judged 🗑️",
+    description:
+      "Submit AI-generated content, get roasted by the Slop Judge, and let the community vote. The sloppier, the better.",
+    url: "https://aislophub.ai",
+    siteName: "AISlop Hub",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "AISlop Hub — Where AI Slop Gets Judged 🗑️",
+    description:
+      "Submit AI-generated content, get roasted by the Slop Judge, and let the community vote. The sloppier, the better.",
+  },
 };
 
 export default function RootLayout({
