@@ -36,46 +36,15 @@ function getTierName(score: number): string {
 }
 
 function makeAsciiStamp(tierName: string, score: number, emoji: string, roast: string, url: string): string {
-  const W = 42;
-  const inner = W - 2;
-
-  function pad(text: string): string {
-    const t = text.slice(0, inner - 2);
-    const spaces = inner - t.length;
-    const left = Math.floor(spaces / 2);
-    const right = spaces - left;
-    return "║" + " ".repeat(left) + t + " ".repeat(right) + "║";
-  }
-
-  function wordWrap(text: string, maxW: number): string[] {
-    const words = text.split(" ");
-    const result: string[] = [];
-    let line = "";
-    for (const word of words) {
-      if ((line + " " + word).trim().length <= maxW) {
-        line = (line + " " + word).trim();
-      } else {
-        if (line) result.push(line);
-        line = word;
-      }
-    }
-    if (line) result.push(line);
-    return result;
-  }
-
-  const border = "═".repeat(inner);
-  const roastWrapped = wordWrap(`"${roast}"`, inner - 4);
+  const sep = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
   const lines = [
-    "╔" + border + "╗",
-    pad(""),
-    pad(`${emoji}  ${tierName}`),
-    pad(`${score}%`),
-    pad(""),
-    ...roastWrapped.map(pad),
-    pad(""),
-    pad(`🗑️ ${url}`),
-    pad(""),
-    "╚" + border + "╝",
+    sep,
+    `${emoji}  ${tierName} — ${score}%`,
+    "",
+    `"${roast}"`,
+    "",
+    `🗑️ ${url}`,
+    sep,
   ];
   return lines.join("\n");
 }
