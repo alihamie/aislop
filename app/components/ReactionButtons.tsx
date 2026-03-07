@@ -4,10 +4,8 @@ import { useState } from "react";
 import type { ReactionType, ReactionCounts } from "@/lib/types";
 
 const REACTIONS: { type: ReactionType; emoji: string; label: string; weight: number }[] = [
-  { type: "not_slop", emoji: "🙅", label: "Not Slop",  weight: 0   },
-  { type: "slop",     emoji: "🗑️", label: "Slop",      weight: 50  },
-  { type: "filthy",   emoji: "💩", label: "Filthy",    weight: 80  },
-  { type: "garbage",  emoji: "☣️", label: "Garbage",   weight: 100 },
+  { type: "slop",     emoji: "🗑️", label: "Slop",     weight: 100 },
+  { type: "not_slop", emoji: "🙅", label: "Not Slop", weight: 0   },
 ];
 
 interface ReactionButtonsProps {
@@ -67,7 +65,9 @@ export function ReactionButtons({
   };
 
   return (
-    <div className="grid grid-cols-2 gap-1.5 w-full">
+    <div className="space-y-2">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">🏛 Do you agree with the judge?</p>
+      <div className="grid grid-cols-2 gap-1.5 w-full">
       {REACTIONS.map(({ type, emoji, label }) => {
         const count = counts[type];
         const isActive = userReaction === type;
@@ -89,6 +89,7 @@ export function ReactionButtons({
           </button>
         );
       })}
+      </div>
     </div>
   );
 }

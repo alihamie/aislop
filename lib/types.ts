@@ -22,12 +22,8 @@ export interface ReactionCounts {
 
 export function getBlendedScore(aiScore: number, counts: ReactionCounts): number {
   if (counts.total < 3) return aiScore; // not enough reactions yet
-  const communityAvg = (
-    counts.not_slop * 0 +
-    counts.slop * 50 +
-    counts.filthy * 80 +
-    counts.garbage * 100
-  ) / counts.total;
+  // slop = 100%, not_slop = 0%
+  const communityAvg = (counts.slop / counts.total) * 100;
   // Community influence scales up to 30% at 10+ reactions
   const communityWeight = Math.min(counts.total / 10, 1) * 0.3;
   return Math.round(aiScore * (1 - communityWeight) + communityAvg * communityWeight);
