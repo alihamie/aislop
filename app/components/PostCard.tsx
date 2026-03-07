@@ -44,25 +44,25 @@ export function PostCard({
       onClick={onClick}
       className={`bg-zinc-900 border rounded-xl p-5 hover:border-zinc-600 transition-all cursor-pointer group ${tilt} hover:rotate-0 ${isLegendary ? "border-yellow-400/60 shadow-yellow-900/20 shadow-lg" : "border-zinc-800"}`}
     >
-      {/* Header: username + time + badges */}
+      {/* Header: username + time */}
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-full bg-yellow-400/20 flex items-center justify-center text-xs font-bold text-yellow-300">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-7 h-7 shrink-0 rounded-full bg-yellow-400/20 flex items-center justify-center text-xs font-bold text-yellow-300">
             {username[0].toUpperCase()}
           </div>
-          <span className="text-sm font-medium text-zinc-300">{username}</span>
-        </div>
-        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-zinc-300 truncate">{username}</span>
           {post.challenge_id && (
-            <span className="text-[9px] font-black uppercase tracking-widest bg-zinc-800 text-yellow-400 border border-yellow-400/40 px-1.5 py-0.5 rounded-sm">
+            <span className="shrink-0 text-[9px] font-black uppercase tracking-widest bg-zinc-800 text-yellow-400 border border-yellow-400/40 px-1.5 py-0.5 rounded-sm">
               🏆
             </span>
           )}
           {isLegendary && (
-            <span className="text-[10px] font-black uppercase tracking-widest bg-yellow-400 text-zinc-950 px-2 py-0.5 rounded-sm rotate-[1deg]">
+            <span className="shrink-0 text-[10px] font-black uppercase tracking-widest bg-yellow-400 text-zinc-950 px-2 py-0.5 rounded-sm">
               LEGENDARY
             </span>
           )}
+        </div>
+        <div className="flex items-center gap-2 shrink-0 ml-2">
           <span className="text-xs text-zinc-500">{timeAgo(post.created_at)}</span>
           <ShareButton id={post.id} />
           {currentUserId === post.user_id && onDelete && (
