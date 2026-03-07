@@ -37,11 +37,12 @@ interface SubmitResult {
   remaining: number;
 }
 
-function detectUrlType(url: string): "tweet" | "reddit" | null {
+function detectUrlType(url: string): "tweet" | "reddit" | "generic" | null {
   try {
     const u = new URL(url);
     if (u.hostname.includes("twitter.com") || u.hostname.includes("x.com")) return "tweet";
     if (u.hostname.includes("reddit.com")) return "reddit";
+    if (u.protocol === "http:" || u.protocol === "https:") return "generic";
     return null;
   } catch {
     return null;
@@ -68,7 +69,8 @@ function SubmitPageContent() {
   const [url, setUrl] = useState("");
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
-  const [fetchStatus, setFetchStatus] = useState<"idle" | "loading" | "done" | "error" | "unsupported">("idle");
+  const [urlType, setUrlType] = useState<"tweet" | "reddit" | "generic" | null>(null);
+  const [fetchStatus, setFetchStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [loading, setLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState(LOADING_MSGS[0]);
   const [error, setError] = useState("");
@@ -93,12 +95,9 @@ function SubmitPageContent() {
     if (!trimmed || fetchedUrl.current === trimmed) return;
 
     const type = detectUrlType(trimmed);
+    setUrlType(type);
     if (!type) {
-      // Not a tweet/reddit — just keep URL as source, clear any prior fetched content
-      if (fetchStatus === "done") {
-        setContent("");
-        setFetchStatus("idle");
-      }
+      if (fetchStatus === "done") { setContent(""); setFetchStatus("idle"); }
       return;
     }
 
@@ -107,7 +106,10 @@ function SubmitPageContent() {
     setError("");
 
     try {
-      const endpoint = type === "tweet" ? "/api/extract-tweet" : "/api/extract-reddit";
+      const endpoint =
+      type === "tweet" ? "/api/extract-tweet" :
+      type === "reddit" ? "/api/extract-reddit" :
+      "/api/extract-url";
       const res = await fetch(`${endpoint}?url=${encodeURIComponent(trimmed)}`);
       const data = await res.json();
       if (!res.ok) {
@@ -240,7 +242,10 @@ function SubmitPageContent() {
         {/* URL — first, always shown */}
         <div>
           <label className="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">
-            URL <span className="text-zinc-600 normal-case font-normal tracking-normal">(optional — tweet, Reddit, or any link)</span>
+            URL{" "}
+            <span className="text-zinc-600 normal-case font-normal tracking-normal">
+              (optional — tweet, Reddit, Substack, Medium, any article)
+            </span>
           </label>
           <div className="relative">
             <input
@@ -254,7 +259,9 @@ function SubmitPageContent() {
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500 animate-pulse">Fetching…</span>
             )}
             {fetchStatus === "done" && (
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-green-500">✓ Extracted</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-green-500">
+                ✓ {urlType === "tweet" ? "Tweet" : urlType === "reddit" ? "Reddit" : "Article"} extracted
+              </span>
             )}
           </div>
           {fetchStatus === "error" && error && (
