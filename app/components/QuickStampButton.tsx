@@ -65,6 +65,13 @@ export function QuickStampButton({ postId, score, roast }: QuickStampButtonProps
       await navigator.clipboard.writeText(stamp);
     } catch { /* ignore */ }
 
+    // On mobile: open native share sheet after copying
+    if (navigator.share) {
+      try {
+        await navigator.share({ text: stamp });
+      } catch { /* user dismissed */ }
+    }
+
     setStatus("done");
     setTimeout(() => setStatus("idle"), 2000);
   };

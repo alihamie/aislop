@@ -50,6 +50,13 @@ export function SlopStampButton({ postId, score, roast }: SlopStampButtonProps) 
     try {
       await navigator.clipboard.writeText(stamp);
     } catch { /* ignore */ }
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ text: stamp });
+      } catch { /* user dismissed */ }
+    }
+
     setStatus("done");
     setTimeout(() => setStatus("idle"), 2500);
   };
