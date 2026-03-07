@@ -1,7 +1,7 @@
 "use client";
 
 import { Post, getSlopColor, timeAgo, ReactionType, ReactionCounts, getBlendedScore } from "@/lib/types";
-import { QuickStampButton } from "./QuickStampButton";
+import { ShareButton } from "./ShareButton";
 import { SlopMeter } from "./SlopMeter";
 import { ReactionButtons } from "./ReactionButtons";
 import { PostMenu } from "./PostMenu";
@@ -64,7 +64,7 @@ export function PostCard({
             </span>
           )}
           <span className="text-xs text-zinc-500">{timeAgo(post.created_at)}</span>
-          <QuickStampButton postId={post.id} score={post.slop_score} roast={post.roast} />
+          <ShareButton id={post.id} />
           {currentUserId === post.user_id && onDelete && (
             <PostMenu onDelete={() => { if (window.confirm("Delete this post?")) onDelete(post.id); }} />
           )}
