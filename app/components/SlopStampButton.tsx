@@ -71,32 +71,20 @@ export function SlopStampButton({ postId, score, roast }: SlopStampButtonProps) 
   };
 
   return (
-    <div className="flex items-center gap-1">
-      {/* Main: share image */}
-      <button
-        onClick={handleShare}
-        disabled={status === "loading"}
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-l-lg text-sm font-bold transition-all border cursor-pointer ${
-          status === "done"
-            ? "bg-yellow-400/20 text-yellow-400 border-yellow-400/50"
-            : status === "loading"
-            ? "bg-zinc-800 text-zinc-500 border-zinc-700 animate-pulse"
-            : "bg-zinc-800 text-zinc-300 border-zinc-700 hover:bg-zinc-700 hover:text-yellow-400 hover:border-yellow-400/40"
-        }`}
-        title="Share Slop Stamp image"
-      >
-        <span>{status === "done" ? "✅" : "🗑️"}</span>
-        <span>{status === "loading" ? "Loading..." : label}</span>
-      </button>
-
-      {/* Secondary: copy text stamp */}
-      <button
-        onClick={handleCopyText}
-        className="flex items-center px-2.5 py-1.5 rounded-r-lg text-sm font-bold bg-zinc-800 text-zinc-400 border border-l-0 border-zinc-700 hover:bg-zinc-700 hover:text-yellow-400 hover:border-yellow-400/40 transition-all cursor-pointer"
-        title="Copy text stamp"
-      >
-        📋
-      </button>
-    </div>
+    <button
+      onClick={handleShare}
+      disabled={status === "loading"}
+      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold transition-all border cursor-pointer ${
+        status === "done"
+          ? "bg-yellow-400/20 text-yellow-400 border-yellow-400/50"
+          : status === "loading"
+          ? "bg-zinc-800 text-zinc-500 border-zinc-700 animate-pulse"
+          : "bg-zinc-800 text-zinc-300 border-zinc-700 hover:bg-zinc-700 hover:text-yellow-400 hover:border-yellow-400/40"
+      }`}
+      title="Share Slop Stamp image"
+    >
+      <span>{status === "done" ? "✅" : "🗑️"}</span>
+      <span>{status === "loading" ? "Loading..." : label}</span>
+    </button>
   );
 }
