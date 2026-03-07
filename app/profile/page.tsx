@@ -73,15 +73,17 @@ export default function ProfilePage() {
             {(profile?.username?.[0] ?? "?").toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-black tracking-tighter truncate">@{profile?.username ?? "..."}</h1>
-            <p className="text-zinc-500 text-sm">{posts.length} slop dump{posts.length !== 1 ? "s" : ""}</p>
+            <h1 className="text-2xl font-black tracking-tighter break-all">@{profile?.username ?? "..."}</h1>
+            <div className="flex items-center gap-3 mt-0.5">
+              <p className="text-zinc-500 text-sm">{posts.length} slop dump{posts.length !== 1 ? "s" : ""}</p>
+              <button
+                onClick={handleSignOut}
+                className="text-xs text-red-400 hover:text-red-300 transition-colors cursor-pointer underline underline-offset-2"
+              >
+                Sign Out
+              </button>
+            </div>
           </div>
-          <button
-            onClick={handleSignOut}
-            className="shrink-0 text-sm text-red-400 hover:text-red-300 border border-red-400/30 hover:border-red-400/60 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
-          >
-            Sign Out
-          </button>
         </div>
 
         {/* Stats */}
