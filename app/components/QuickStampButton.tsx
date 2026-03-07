@@ -35,7 +35,7 @@ export function QuickStampButton({ postId }: QuickStampButtonProps) {
       const file = new File([blob], "slop-stamp.png", { type: "image/png" });
 
       if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: "AI Slop Certified", url: `https://aislophub.ai/post/${postId}`, text: "Rate this AI slop 🗑️" });
+        await navigator.share({ files: [file], title: "AI Slop Certified", url: `https://aislophub.ai/post/${postId}`, text: "AI Slop Certified 🗑️" });
         setStatus("done");
         setTimeout(() => setStatus("idle"), 2000);
         return;

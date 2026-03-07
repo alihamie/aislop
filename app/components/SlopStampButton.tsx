@@ -46,7 +46,7 @@ export function SlopStampButton({ postId, score, roast }: SlopStampButtonProps) 
 
       // Mobile: share image via native share sheet
       if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: "AI Slop Certified", url: `https://aislophub.ai/post/${postId}`, text: "Rate this AI slop 🗑️" });
+        await navigator.share({ files: [file], title: "AI Slop Certified", url: `https://aislophub.ai/post/${postId}`, text: "AI Slop Certified 🗑️" });
         setLabel("Shared!");
         setStatus("done");
         setTimeout(() => { setStatus("idle"); setLabel("Slop Stamp"); }, 2500);
