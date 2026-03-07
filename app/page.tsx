@@ -3,7 +3,7 @@ import type { Post } from "@/lib/types";
 import FeedClient from "./components/FeedClient";
 import Link from "next/link";
 
-export const revalidate = 0;
+export const revalidate = 30; // cache feed for 30s — revalidates in background
 
 export default async function FeedPage() {
   const supabase = await createServerSupabase();

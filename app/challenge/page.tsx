@@ -3,7 +3,7 @@ import { WeeklyChallengeClient } from "@/app/components/WeeklyChallengeClient";
 import type { Challenge, Post } from "@/lib/types";
 import type { Metadata } from "next";
 
-export const revalidate = 0;
+export const revalidate = 30;
 
 export const metadata: Metadata = {
   title: "Weekly Challenge — AI Slop",
