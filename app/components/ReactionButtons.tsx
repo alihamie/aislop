@@ -83,11 +83,9 @@ export function ReactionButtons({
           >
             <span className="text-base leading-none">{emoji}</span>
             <span className="flex-1 text-left text-xs">{label}</span>
-            {count > 0 && (
-              <span className={`text-xs font-black ${isActive ? "text-yellow-400" : "text-zinc-500"}`}>
-                {count}
-              </span>
-            )}
+            <span className={`text-xs font-black ${isActive ? "text-yellow-400" : "text-zinc-600"}`}>
+              {count}
+            </span>
           </button>
         );
       })}

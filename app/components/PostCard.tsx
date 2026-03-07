@@ -4,6 +4,7 @@ import { Post, getSlopColor, timeAgo, ReactionType, ReactionCounts, getBlendedSc
 import { QuickStampButton } from "./QuickStampButton";
 import { SlopMeter } from "./SlopMeter";
 import { ReactionButtons } from "./ReactionButtons";
+import { PostMenu } from "./PostMenu";
 
 interface PostCardProps {
   post: Post;
@@ -65,16 +66,7 @@ export function PostCard({
           <span className="text-xs text-zinc-500">{timeAgo(post.created_at)}</span>
           <QuickStampButton postId={post.id} score={post.slop_score} roast={post.roast} />
           {currentUserId === post.user_id && onDelete && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (window.confirm("Delete this post?")) onDelete(post.id);
-              }}
-              className="text-zinc-600 hover:text-red-400 transition-colors text-sm cursor-pointer"
-              title="Delete post"
-            >
-              🗑️
-            </button>
+            <PostMenu onDelete={() => { if (window.confirm("Delete this post?")) onDelete(post.id); }} />
           )}
         </div>
       </div>

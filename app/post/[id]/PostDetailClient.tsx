@@ -6,6 +6,7 @@ import { log } from "@/lib/logger";
 import type { Post, ReactionType, ReactionCounts } from "@/lib/types";
 import { useAuth } from "@/app/components/AuthProvider";
 import { ReactionButtons } from "@/app/components/ReactionButtons";
+import { PostMenu } from "@/app/components/PostMenu";
 import { ShareButton } from "@/app/components/ShareButton";
 import { SlopStampButton } from "@/app/components/SlopStampButton";
 import { SignInModal } from "@/app/components/SignInModal";
@@ -62,16 +63,11 @@ export function PostDetailClient({ post }: { post: Post }) {
           onAuthRequired={handleAuthRequired}
         />
         <div className="flex items-center gap-2 justify-end flex-wrap">
-          {userId === post.user_id && (
-            <button
-              onClick={handleDelete}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-red-950/50 hover:bg-red-900/60 text-red-400 hover:text-red-300 transition-all border border-red-800/50 cursor-pointer"
-            >
-              🗑️ Delete
-            </button>
-          )}
           <SlopStampButton postId={post.id} score={post.slop_score} roast={post.roast} />
           <ShareButton id={post.id} />
+          {userId === post.user_id && (
+            <PostMenu onDelete={handleDelete} />
+          )}
         </div>
       </div>
     </>
