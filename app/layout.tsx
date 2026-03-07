@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import { AuthButton } from "./components/AuthButton";
@@ -88,6 +89,7 @@ export default function RootLayout({
 
           {/* Mobile bottom nav */}
           <MobileNav />
+          <Analytics />
         </AuthProvider>
       </body>
     </html>
