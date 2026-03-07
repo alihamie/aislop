@@ -5,12 +5,10 @@ import { createClient } from "@/lib/supabase";
 import type { Profile } from "@/lib/types";
 import { log } from "@/lib/logger";
 import { useAuth } from "./AuthProvider";
-import { UsernameModal } from "@/app/components/UsernameModal";
 
 export function AuthButton() {
   const { user, profile, loading, setProfile } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-  const showUsernameModal = !!user && !profile;
 
   const supabase = createClient();
 
@@ -28,10 +26,6 @@ export function AuthButton() {
 
   const handleSignOut = () => {
     window.location.href = "/api/auth/signout";
-  };
-
-  const handleUsernameCreated = (newProfile: Profile) => {
-    setProfile(newProfile);
   };
 
   if (loading) {
@@ -123,12 +117,7 @@ export function AuthButton() {
         )}
       </div>
 
-      {showUsernameModal && user && (
-        <UsernameModal
-          userId={user.id}
-          onComplete={handleUsernameCreated}
-        />
-      )}
+
     </>
   );
 }

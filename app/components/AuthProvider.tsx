@@ -13,6 +13,7 @@ import type { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase";
 import type { Profile } from "@/lib/types";
 import { log } from "@/lib/logger";
+import { UsernameModal } from "./UsernameModal";
 
 interface AuthContextValue {
   user: User | null;
@@ -118,7 +119,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [authError, loading, profile, user]
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+      {/* Global username modal — rendered outside AuthButton so it works on mobile too */}
+      {!loading && user && !profile && (
+        <UsernameModal userId={user.id} onComplete={(p) => setProfile(p)} />
+      )}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
