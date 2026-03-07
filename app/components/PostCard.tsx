@@ -1,6 +1,7 @@
 "use client";
 
 import { Post, getSlopColor, timeAgo } from "@/lib/types";
+import { QuickStampButton } from "./QuickStampButton";
 import { SlopMeter } from "./SlopMeter";
 import { VoteButtons } from "./VoteButtons";
 import type { VoteType } from "@/lib/types";
@@ -54,6 +55,7 @@ export function PostCard({
             </span>
           )}
           <span className="text-xs text-zinc-500">{timeAgo(post.created_at)}</span>
+          <QuickStampButton postId={post.id} score={post.slop_score} roast={post.roast} />
           {currentUserId === post.user_id && onDelete && (
             <button
               onClick={(e) => {
