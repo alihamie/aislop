@@ -31,6 +31,7 @@ export default function FeedClient({
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialPosts.length >= PAGE_SIZE);
   const [userReactions, setUserReactions] = useState<Record<string, ReactionType>>({});
+  const [reactionCounts, setReactionCounts] = useState<Record<string, { not_slop: number; slop: number; filthy: number; garbage: number; total: number }>>({});
   const [showSignInModal, setShowSignInModal] = useState(false);
   const { user } = useAuth();
   const userId = user?.id ?? null;
@@ -38,30 +39,27 @@ export default function FeedClient({
 
   const supabase = createClient();
 
-  // Fetch user's reactions for visible posts when auth state changes
+  // Fetch fresh reaction counts + user reactions on mount (batch, always fresh from DB)
   useEffect(() => {
     let active = true;
-    const initReactions = async () => {
-      if (!userId) { setUserReactions({}); return; }
-      const postIds = initialPosts.map((p) => p.id);
+    const fetchReactions = async () => {
+      const postIds = posts.map((p) => p.id);
       if (!postIds.length) return;
-      const { data } = await supabase
-        .from("reactions")
-        .select("post_id, reaction_type")
-        .eq("user_id", userId)
-        .in("post_id", postIds);
-      if (!active) return;
-      if (data) {
-        const map: Record<string, ReactionType> = {};
-        data.forEach((r: { post_id: string; reaction_type: string }) => {
-          map[r.post_id] = r.reaction_type as ReactionType;
-        });
-        setUserReactions(map);
+      const res = await fetch(`/api/reactions/batch?ids=${postIds.join(",")}`);
+      if (!active || !res.ok) return;
+      const json = await res.json();
+      const counts: Record<string, { not_slop: number; slop: number; filthy: number; garbage: number; total: number }> = {};
+      const reactions: Record<string, ReactionType> = {};
+      for (const [id, entry] of Object.entries(json.data as Record<string, { counts: { not_slop: number; slop: number; filthy: number; garbage: number; total: number }; userReaction: ReactionType | null }>)) {
+        counts[id] = entry.counts;
+        if (entry.userReaction) reactions[id] = entry.userReaction;
       }
+      setReactionCounts(counts);
+      setUserReactions(reactions);
     };
-    void initReactions();
+    void fetchReactions();
     return () => { active = false; };
-  }, [initialPosts, supabase, userId]);
+  }, [posts.map(p => p.id).join(","), userId]);
 
   const fetchPosts = useCallback(
     async (feedSort: FeedSort, offset: number = 0) => {
@@ -73,27 +71,6 @@ export default function FeedClient({
     []
   );
 
-  const fetchUserReactions = useCallback(
-    async (postIds: string[]) => {
-      if (!userId || !postIds.length) return;
-      const { data } = await supabase
-        .from("reactions")
-        .select("post_id, reaction_type")
-        .eq("user_id", userId)
-        .in("post_id", postIds);
-      if (data) {
-        setUserReactions((prev) => {
-          const updated = { ...prev };
-          data.forEach((r: { post_id: string; reaction_type: string }) => {
-            updated[r.post_id] = r.reaction_type as ReactionType;
-          });
-          return updated;
-        });
-      }
-    },
-    [userId, supabase]
-  );
-
   const handleTabChange = async (newSort: FeedSort) => {
     if (newSort === sort) return;
     setSort(newSort);
@@ -101,7 +78,6 @@ export default function FeedClient({
     const data = await fetchPosts(newSort);
     setPosts(data);
     setHasMore(data.length >= PAGE_SIZE);
-    await fetchUserReactions(data.map((p) => p.id));
     setLoading(false);
   };
 
@@ -110,7 +86,6 @@ export default function FeedClient({
     const data = await fetchPosts(sort, posts.length);
     setPosts((prev) => [...prev, ...data]);
     setHasMore(data.length >= PAGE_SIZE);
-    await fetchUserReactions(data.map((p) => p.id));
     setLoading(false);
   };
 
@@ -183,7 +158,14 @@ export default function FeedClient({
           {posts.map((post) => (
             <PostCard
               key={post.id}
-              post={post}
+              post={{
+                ...post,
+                not_slop_count: reactionCounts[post.id]?.not_slop ?? post.not_slop_count ?? 0,
+                slop_count: reactionCounts[post.id]?.slop ?? post.slop_count ?? 0,
+                filthy_count: reactionCounts[post.id]?.filthy ?? post.filthy_count ?? 0,
+                garbage_count: reactionCounts[post.id]?.garbage ?? post.garbage_count ?? 0,
+                total_reactions: reactionCounts[post.id]?.total ?? post.total_reactions ?? 0,
+              }}
               userReaction={userReactions[post.id] ?? null}
               isAuthenticated={!!userId}
               onAuthRequired={handleAuthRequired}
