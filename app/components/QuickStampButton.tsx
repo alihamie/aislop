@@ -58,7 +58,7 @@ export function QuickStampButton({ postId, score, roast }: QuickStampButtonProps
 
     const tierName = getTierName(score);
     const emoji = getTierEmoji(score);
-    const url = `aislop.com/post/${postId.slice(0, 8)}`;
+    const url = `aislophub.ai/post/${postId}`;
     const stamp = makeAsciiStamp(tierName, score, emoji, roast, url);
 
     try {
