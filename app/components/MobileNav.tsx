@@ -8,19 +8,13 @@ import { createClient } from "@/lib/supabase";
 export function MobileNav() {
   const pathname = usePathname();
 
-  const navItem = (href: string, emoji: string, label: string, primary = false) => {
+  const navItem = (href: string, emoji: string, label: string) => {
     const isActive = pathname === href;
     return (
       <Link
         href={href}
         className={`flex flex-col items-center gap-0.5 px-4 py-2 rounded-lg transition-colors ${
-          primary
-            ? isActive
-              ? "bg-yellow-300 text-zinc-950"
-              : "bg-yellow-400 text-zinc-950 hover:bg-yellow-300"
-            : isActive
-            ? "text-yellow-400"
-            : "text-zinc-400 hover:text-white"
+          isActive ? "text-yellow-400" : "text-zinc-400 hover:text-white"
         }`}
       >
         <span className="text-xl">{emoji}</span>
@@ -34,7 +28,7 @@ export function MobileNav() {
       <div className="flex items-center justify-around px-2 py-2">
         {navItem("/", "🗑️", "Feed")}
         {navItem("/challenge", "⚔️", "Challenge")}
-        {navItem("/submit", "＋", "Dump", true)}
+        {navItem("/submit", "＋", "Dump")}
       </div>
     </nav>
   );
