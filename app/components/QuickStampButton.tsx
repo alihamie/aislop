@@ -56,15 +56,15 @@ export function QuickStampButton({ postId, score, roast }: QuickStampButtonProps
     <button
       onClick={handleCopy}
       title="Copy Slop Stamp"
-      className={`p-1.5 rounded-md transition-all cursor-pointer border ${
+      className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer border-2 ${
         copied
-          ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/40"
-          : "text-zinc-400 bg-zinc-800 border-zinc-700 hover:text-yellow-400 hover:border-yellow-400/40"
+          ? "text-yellow-400 bg-yellow-400/10 border-yellow-400"
+          : "text-zinc-300 bg-zinc-800 border-zinc-600 hover:text-yellow-400 hover:border-yellow-400 hover:bg-yellow-400/10"
       }`}
     >
       {copied
-        ? <span className="text-xs font-black">✓</span>
-        : <StampIcon className="w-4 h-4 shrink-0" />
+        ? <span className="text-sm font-black">✓</span>
+        : <StampIcon className="w-5 h-5 shrink-0" />
       }
     </button>
   );
