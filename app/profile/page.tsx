@@ -68,19 +68,17 @@ export default function ProfilePage() {
       <div className="max-w-2xl mx-auto px-4 py-10">
 
         {/* Profile header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-yellow-400/20 border-2 border-yellow-400/40 flex items-center justify-center text-2xl font-black text-yellow-300">
-              {(profile?.username?.[0] ?? "?").toUpperCase()}
-            </div>
-            <div>
-              <h1 className="text-2xl font-black tracking-tighter">@{profile?.username ?? "..."}</h1>
-              <p className="text-zinc-500 text-sm">{posts.length} slop dump{posts.length !== 1 ? "s" : ""}</p>
-            </div>
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-14 h-14 shrink-0 rounded-full bg-yellow-400/20 border-2 border-yellow-400/40 flex items-center justify-center text-2xl font-black text-yellow-300">
+            {(profile?.username?.[0] ?? "?").toUpperCase()}
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-black tracking-tighter truncate">@{profile?.username ?? "..."}</h1>
+            <p className="text-zinc-500 text-sm">{posts.length} slop dump{posts.length !== 1 ? "s" : ""}</p>
           </div>
           <button
             onClick={handleSignOut}
-            className="text-sm text-red-400 hover:text-red-300 border border-red-400/30 hover:border-red-400/60 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+            className="shrink-0 text-sm text-red-400 hover:text-red-300 border border-red-400/30 hover:border-red-400/60 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
           >
             Sign Out
           </button>
@@ -144,9 +142,8 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <SlopMeter score={post.slop_score} size="sm" />
-                  <div className="flex items-center justify-between mt-2">
+                  <div className="mt-2">
                     <span className="text-xs text-zinc-500">{timeAgo(post.created_at)}</span>
-                    <span className="text-xs font-bold" style={{ color: "#facc15" }}>{post.slop_score}% — {getSlopTier(post.slop_score)}</span>
                   </div>
                 </div>
               ))}
