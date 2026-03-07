@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import Link from "next/link";
 import { AuthButton } from "./components/AuthButton";
 import { AuthProvider } from "./components/AuthProvider";
-import { MobileNav } from "./components/MobileNav";
+import { MobileNav, MobileProfileIcon } from "./components/MobileNav";
 import { SlopDumpButton } from "./components/SlopDumpButton";
 import "./globals.css";
 
@@ -51,6 +51,11 @@ export default function RootLayout({
                   <span>Weekly</span>
                 </Link>
               </nav>
+              {/* Mobile: profile icon only */}
+              <div className="flex sm:hidden">
+                <MobileProfileIcon />
+              </div>
+              {/* Desktop: full buttons */}
               <div className="hidden sm:flex items-center gap-3">
                 <SlopDumpButton />
                 <AuthButton />

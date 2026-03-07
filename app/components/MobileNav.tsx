@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "./AuthProvider";
+import { createClient } from "@/lib/supabase";
 
 export function MobileNav() {
   const pathname = usePathname();
-  const { user } = useAuth();
 
   const navItem = (href: string, emoji: string, label: string, primary = false) => {
     const isActive = pathname === href;
@@ -35,8 +35,41 @@ export function MobileNav() {
         {navItem("/", "🗑️", "Feed")}
         {navItem("/challenge", "⚔️", "Challenge")}
         {navItem("/submit", "＋", "Dump", true)}
-        {navItem("/profile", "👤", "Me")}
       </div>
     </nav>
+  );
+}
+
+export function MobileProfileIcon() {
+  const { user, profile, loading } = useAuth();
+  const supabase = createClient();
+
+  const handleSignIn = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
+  };
+
+  if (loading) return <div className="w-8 h-8 rounded-full bg-zinc-800 animate-pulse" />;
+
+  if (!user) return (
+    <button
+      onClick={handleSignIn}
+      className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer"
+      title="Sign in"
+    >
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      </svg>
+    </button>
+  );
+
+  return (
+    <Link href="/profile">
+      <div className="w-8 h-8 rounded-full bg-yellow-400/20 border-2 border-yellow-400/60 flex items-center justify-center text-sm font-black text-yellow-300 cursor-pointer">
+        {(profile?.username?.[0] ?? "?").toUpperCase()}
+      </div>
+    </Link>
   );
 }
