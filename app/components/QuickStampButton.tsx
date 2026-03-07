@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { getSlopTier } from "@/lib/types";
 
 interface QuickStampButtonProps {
   postId: string;
@@ -28,7 +27,15 @@ function getTierEmoji(score: number): string {
   return "👑";
 }
 
-function makeAsciiStamp(tier: string, score: number, emoji: string, roast: string, url: string): string {
+function getTierName(score: number): string {
+  if (score <= 20) return "BARELY SLOP";
+  if (score <= 40) return "CERTIFIED SLOP";
+  if (score <= 60) return "PREMIUM GARBAGE";
+  if (score <= 80) return "WEAPONS-GRADE SLOP";
+  return "LEGENDARY FILTH";
+}
+
+function makeAsciiStamp(tierName: string, score: number, emoji: string, roast: string, url: string): string {
   const W = 42;
   const inner = W - 2;
 
@@ -61,7 +68,7 @@ function makeAsciiStamp(tier: string, score: number, emoji: string, roast: strin
   const lines = [
     "╔" + border + "╗",
     pad(""),
-    pad(`${emoji}  ${tier}`),
+    pad(`${emoji}  ${tierName}`),
     pad(`${score}%`),
     pad(""),
     ...roastWrapped.map(pad),
@@ -80,10 +87,10 @@ export function QuickStampButton({ postId, score, roast }: QuickStampButtonProps
     e.stopPropagation();
     e.preventDefault();
 
-    const tier = getSlopTier(score);
+    const tierName = getTierName(score);
     const emoji = getTierEmoji(score);
-    const url = `${window.location.origin}/post/${postId}`;
-    const stamp = makeAsciiStamp(tier, score, emoji, roast, url);
+    const url = `aislop.com/post/${postId.slice(0, 8)}`;
+    const stamp = makeAsciiStamp(tierName, score, emoji, roast, url);
 
     try {
       await navigator.clipboard.writeText(stamp);
