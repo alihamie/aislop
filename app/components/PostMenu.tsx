@@ -28,7 +28,7 @@ export function PostMenu({ onDelete }: PostMenuProps) {
         ···
       </button>
       {open && (
-        <div className="absolute right-0 top-8 z-50 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl py-1 min-w-[120px]">
+        <div className="absolute right-0 bottom-8 z-50 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl py-1 min-w-[120px]">
           <button
             onClick={(e) => {
               e.stopPropagation();
