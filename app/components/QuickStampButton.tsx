@@ -19,59 +19,31 @@ function StampIcon({ className }: { className?: string }) {
   );
 }
 
-function getTierEmoji(score: number): string {
-  if (score <= 20) return "😬";
-  if (score <= 40) return "🗑️";
-  if (score <= 60) return "💩";
-  if (score <= 80) return "☣️";
-  return "👑";
-}
-
-function getTierName(score: number): string {
-  if (score <= 20) return "BARELY SLOP";
-  if (score <= 40) return "CERTIFIED SLOP";
-  if (score <= 60) return "PREMIUM GARBAGE";
-  if (score <= 80) return "WEAPONS-GRADE SLOP";
-  return "LEGENDARY FILTH";
-}
-
-function makeAsciiStamp(tierName: string, score: number, emoji: string, roast: string, url: string): string {
-  const sep = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
-  const lines = [
-    sep,
-    `${emoji}  ${tierName} — ${score}%`,
-    "",
-    `"${roast}"`,
-    "",
-    `✅ AI Slop Certified | ${url}`,
-    sep,
-  ];
-  return lines.join("\n");
-}
-
-export function QuickStampButton({ postId, score, roast }: QuickStampButtonProps) {
-  const [status, setStatus] = useState<"idle" | "done">("idle");
+export function QuickStampButton({ postId }: QuickStampButtonProps) {
+  const [status, setStatus] = useState<"idle" | "loading" | "done">("idle");
 
   const handleStamp = async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
+    if (status === "loading") return;
+    setStatus("loading");
 
-    const tierName = getTierName(score);
-    const emoji = getTierEmoji(score);
-    const url = `aislophub.ai/post/${postId}`;
-    const stamp = makeAsciiStamp(tierName, score, emoji, roast, url);
+    const imageUrl = `/api/stamp/${postId}`;
 
     try {
-      await navigator.clipboard.writeText(stamp);
-    } catch { /* ignore */ }
+      const blob = await fetch(imageUrl).then((r) => r.blob());
+      const file = new File([blob], "slop-stamp.png", { type: "image/png" });
 
-    // On mobile: open native share sheet after copying
-    if (navigator.share) {
-      try {
-        await navigator.share({ text: stamp });
-      } catch { /* user dismissed */ }
-    }
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: "AI Slop Certified" });
+        setStatus("done");
+        setTimeout(() => setStatus("idle"), 2000);
+        return;
+      }
+    } catch { /* fall through */ }
 
+    // Desktop fallback: open image
+    window.open(imageUrl, "_blank");
     setStatus("done");
     setTimeout(() => setStatus("idle"), 2000);
   };
@@ -79,10 +51,12 @@ export function QuickStampButton({ postId, score, roast }: QuickStampButtonProps
   return (
     <button
       onClick={handleStamp}
-      title="Copy Slop Stamp"
+      title="Share Slop Stamp"
       className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer border-2 ${
         status === "done"
           ? "text-yellow-400 bg-yellow-400/10 border-yellow-400"
+          : status === "loading"
+          ? "text-zinc-500 bg-zinc-800 border-zinc-700 animate-pulse"
           : "text-zinc-300 bg-zinc-800 border-zinc-600 hover:text-yellow-400 hover:border-yellow-400 hover:bg-yellow-400/10"
       }`}
     >
