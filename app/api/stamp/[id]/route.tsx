@@ -98,7 +98,7 @@ export async function GET(
             {`"${roast}"`}
           </div>
           <div style={{ color: "#71717a", fontSize: 11, letterSpacing: 3, marginTop: 20, display: "flex" }}>
-            AISLOP.COM
+            AISLOPHUB.AI
           </div>
         </div>
       </div>
