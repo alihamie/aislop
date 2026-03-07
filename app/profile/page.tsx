@@ -49,6 +49,17 @@ export default function ProfilePage() {
     </div>
   );
 
+  if (!user) return (
+    <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center gap-4 text-center px-4">
+      <div className="text-4xl">🗑️</div>
+      <h1 className="text-xl font-black text-white">Sign in to see your slop</h1>
+      <p className="text-zinc-500 text-sm">You need an account to view your profile.</p>
+      <a href="/" className="px-4 py-2 bg-yellow-400 text-zinc-950 font-black rounded-lg hover:bg-yellow-300 transition-colors">
+        Go to Feed
+      </a>
+    </div>
+  );
+
   const avgScore = posts.length ? Math.round(posts.reduce((s, p) => s + p.slop_score, 0) / posts.length) : 0;
   const topPost = posts.length ? posts.reduce((a, b) => a.slop_score > b.slop_score ? a : b) : null;
 

@@ -81,10 +81,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setAuthError(null);
 
       if (nextUser) {
-        // Skip profile re-fetch if already loaded for this user.
-        // SIGNED_IN fires repeatedly as proxy refreshes tokens — this prevents
-        // the AbortError loop where each new event steals the lock mid-fetch.
-        if (nextUser.id !== lastLoadedUserId.current) {
+        // Skip profile re-fetch if already loaded for this user UNLESS it's a
+        // fresh sign-in event. INITIAL_SESSION also triggers on iOS Safari after
+        // OAuth redirect (Safari doesn't always fire SIGNED_IN).
+        const isFreshSignIn = event === "SIGNED_IN" || event === "INITIAL_SESSION";
+        if (nextUser.id !== lastLoadedUserId.current || isFreshSignIn) {
           await loadProfile(nextUser.id);
         }
       } else {
