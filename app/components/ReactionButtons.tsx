@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { ReactionType, ReactionCounts } from "@/lib/types";
 
 const REACTIONS: { type: ReactionType; emoji: string; label: string; weight: number }[] = [
@@ -26,6 +26,10 @@ export function ReactionButtons({
   const [counts, setCounts] = useState(initialCounts);
   const [userReaction, setUserReaction] = useState<ReactionType | null>(initialUserReaction);
   const [loading, setLoading] = useState(false);
+
+  // Sync when parent fetches fresh data (e.g. PostDetailClient loading counts async)
+  useEffect(() => { setCounts(initialCounts); }, [initialCounts.total]);
+  useEffect(() => { setUserReaction(initialUserReaction); }, [initialUserReaction]);
 
   const handleReact = async (e: React.MouseEvent, type: ReactionType) => {
     e.stopPropagation();
