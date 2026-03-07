@@ -83,7 +83,7 @@ export async function GET(
             gap: 0,
           }}
         >
-          <div style={{ color: "#52525b", fontSize: 11, fontWeight: 700, letterSpacing: 5, marginBottom: 16, display: "flex" }}>
+          <div style={{ color: "#71717a", fontSize: 11, fontWeight: 700, letterSpacing: 5, marginBottom: 16, display: "flex" }}>
             AI SLOP JUDGE
           </div>
           <div style={{ fontSize: 52, marginBottom: 8, display: "flex" }}>{emoji}</div>
@@ -97,7 +97,7 @@ export async function GET(
           <div style={{ color: "#a1a1aa", fontSize: 14, fontStyle: "italic", lineHeight: 1.5, maxWidth: 380, textAlign: "center", display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
             {`"${roast}"`}
           </div>
-          <div style={{ color: "#3f3f46", fontSize: 11, letterSpacing: 3, marginTop: 20, display: "flex" }}>
+          <div style={{ color: "#71717a", fontSize: 11, letterSpacing: 3, marginTop: 20, display: "flex" }}>
             AISLOP.COM
           </div>
         </div>
