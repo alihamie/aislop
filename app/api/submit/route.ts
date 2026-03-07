@@ -54,6 +54,12 @@ export async function POST(req: NextRequest) {
   };
 
   try {
+    // Guard against huge request bodies (~50KB max)
+    const contentLength = req.headers.get("content-length");
+    if (contentLength && parseInt(contentLength) > 50_000) {
+      return fail(413, "BODY_TOO_LARGE", "Request body too large. Max 50KB.");
+    }
+
     const body = await req.json();
     const { content, title, turnstileToken, challenge_id, source_url } = body;
 

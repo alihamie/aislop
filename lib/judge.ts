@@ -44,13 +44,23 @@ ROAST EXAMPLES:
 - Low score: "Did a human write this? I can almost taste the originality. Disgusting."
 - Mid score: "Getting there — I can smell the slop, but you need more 'leveraging synergies' to reach the promised land."`;
 
+const FALLBACK_RESULT: JudgeResult = {
+  slop_score: 50,
+  verdict: "Decent Slop 🗑️🗑️",
+  roast: "The AI judge is currently overwhelmed by slop. Your content has been provisionally certified mid-tier garbage.",
+};
+
 async function callGemini(parts: object[]): Promise<string> {
   const startedAt = Date.now();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15_000);
+
   const res = await fetch(GEMINI_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ contents: [{ parts }] }),
-  });
+    signal: controller.signal,
+  }).finally(() => clearTimeout(timeout));
 
   log.debug("judge.gemini.response", {
     status: res.status,
@@ -88,15 +98,24 @@ export async function judgeText(content: string): Promise<JudgeResult> {
     inputLength: truncated.length,
   });
 
-  const raw = await callGemini([
-    { text: JUDGE_PROMPT },
-    { text: `Content to judge:\n\n${truncated}` },
-  ]);
-  const result = parseJSON<{
-    slop_score: number;
-    verdict: string;
-    roast: string;
-  }>(raw);
+  let raw: string;
+  try {
+    raw = await callGemini([
+      { text: JUDGE_PROMPT },
+      { text: `Content to judge:\n\n${truncated}` },
+    ]);
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : "unknown";
+    log.error("judge.gemini.timeout_or_error", { reason, latencyMs: Date.now() - startedAt });
+    return FALLBACK_RESULT;
+  }
+  let result: { slop_score: number; verdict: string; roast: string };
+  try {
+    result = parseJSON<{ slop_score: number; verdict: string; roast: string }>(raw);
+  } catch {
+    log.error("judge.parse.failed", { rawPreview: raw.slice(0, 100) });
+    return FALLBACK_RESULT;
+  }
 
   const score = Math.min(100, Math.max(0, Math.round(result.slop_score)));
 
