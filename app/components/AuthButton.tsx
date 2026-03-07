@@ -105,6 +105,13 @@ export function AuthButton() {
                   {profile?.username}
                 </p>
               </div>
+              <a
+                href="/profile"
+                className="block px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-700 transition-colors cursor-pointer"
+                onClick={() => setMenuOpen(false)}
+              >
+                My Posts
+              </a>
               <button
                 onClick={handleSignOut}
                 className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-zinc-700 transition-colors cursor-pointer"

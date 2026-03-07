@@ -76,6 +76,10 @@ export default function RootLayout({
                 <span className="text-xl">＋</span>
                 <span className="text-[10px] font-black uppercase tracking-wide">Dump</span>
               </Link>
+              <Link href="/profile" className="flex flex-col items-center gap-0.5 px-4 py-2 rounded-lg text-zinc-400 hover:text-white transition-colors">
+                <span className="text-xl">👤</span>
+                <span className="text-[10px] font-bold uppercase tracking-wide">Me</span>
+              </Link>
             </div>
           </nav>
         </AuthProvider>
