@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase";
 import { createRequestId, log } from "@/lib/logger";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { SlopMeter } from "../components/SlopMeter";
-import { TweetVerdictButton } from "../components/TweetVerdictButton";
+import { SlopStampButton } from "../components/SlopStampButton";
 import { getSlopColor } from "@/lib/types";
 import { useAuth } from "../components/AuthProvider";
 
@@ -286,7 +286,7 @@ function SubmitPageContent() {
         </div>
 
         <div className="flex items-center justify-center gap-3 mb-4">
-          <TweetVerdictButton
+          <SlopStampButton
             postId={result.id}
             score={result.slop_score}
             roast={result.roast}

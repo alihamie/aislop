@@ -5,7 +5,7 @@ import { Post, getSlopColor, timeAgo } from "@/lib/types";
 import { SlopMeter } from "./SlopMeter";
 import { VoteButtons } from "./VoteButtons";
 import { ShareButton } from "./ShareButton";
-import { TweetVerdictButton } from "./TweetVerdictButton";
+import { SlopStampButton } from "./SlopStampButton";
 import type { VoteType } from "@/lib/types";
 
 interface PostModalProps {
@@ -147,7 +147,7 @@ export function PostModal({
                   🗑️ Delete
                 </button>
               )}
-              <TweetVerdictButton postId={post.id} score={post.slop_score} roast={post.roast} />
+              <SlopStampButton postId={post.id} score={post.slop_score} roast={post.roast} />
               <ShareButton id={post.id} />
               <a
                 href={`/post/${post.id}`}

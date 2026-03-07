@@ -8,7 +8,7 @@ import type { Post, VoteType } from "@/lib/types";
 import { useAuth } from "@/app/components/AuthProvider";
 import { VoteButtons } from "@/app/components/VoteButtons";
 import { ShareButton } from "@/app/components/ShareButton";
-import { TweetVerdictButton } from "@/app/components/TweetVerdictButton";
+import { SlopStampButton } from "@/app/components/SlopStampButton";
 import { SignInModal } from "@/app/components/SignInModal";
 
 export function PostDetailClient({ post }: { post: Post }) {
@@ -99,7 +99,7 @@ export function PostDetailClient({ post }: { post: Post }) {
             🗑️ Delete
           </button>
         )}
-        <TweetVerdictButton postId={post.id} score={post.slop_score} roast={post.roast} />
+        <SlopStampButton postId={post.id} score={post.slop_score} roast={post.roast} />
         <ShareButton id={post.id} />
       </div>
     </div>
