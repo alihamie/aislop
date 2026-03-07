@@ -2,11 +2,11 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import type { Challenge, ChallengeWithWinner, Post, VoteType } from "@/lib/types";
 import { getSlopColor, timeAgo } from "@/lib/types";
 import { PostCard } from "./PostCard";
-import { PostModal } from "./PostModal";
 import { SignInModal } from "./SignInModal";
 import { ChallengeCountdown } from "./ChallengeCountdown";
 import { SlopMeter } from "./SlopMeter";
@@ -24,6 +24,7 @@ export function WeeklyChallengeClient({ initialChallenge, initialPosts }: Props)
   const router = useRouter();
   const { user } = useAuth();
   const userId = user?.id ?? null;
+  const router = useRouter();
   const supabase = createClient();
 
   // ── Tabs ──────────────────────────────────────────────────
@@ -42,7 +43,6 @@ export function WeeklyChallengeClient({ initialChallenge, initialPosts }: Props)
   const [winnersOffset, setWinnersOffset]   = useState(0);
 
   // ── Modal state ────────────────────────────────────────────
-  const [selected, setSelected]             = useState<Post | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
 
   // ── Fetch user votes on mount ──────────────────────────────
@@ -94,7 +94,6 @@ export function WeeklyChallengeClient({ initialChallenge, initialPosts }: Props)
     const res = await fetch(`/api/posts/${id}`, { method: "DELETE" });
     if (res.ok) {
       setPosts((prev) => prev.filter((p) => p.id !== id));
-      if (selected?.id === id) setSelected(null);
     }
   };
 
@@ -225,7 +224,7 @@ export function WeeklyChallengeClient({ initialChallenge, initialPosts }: Props)
                     userVote={userVotes[post.id] ?? null}
                     isAuthenticated={!!userId}
                     onAuthRequired={() => setShowSignInModal(true)}
-                    onClick={() => setSelected(post)}
+                    onClick={() => router.push(`/post/${post.id}`)}
                     currentUserId={userId}
                     onDelete={handleDelete}
                   />
@@ -285,17 +284,6 @@ export function WeeklyChallengeClient({ initialChallenge, initialPosts }: Props)
       )}
 
       {/* ── Modals ─────────────────────────────────────────── */}
-      {selected && (
-        <PostModal
-          post={selected}
-          userVote={userVotes[selected.id] ?? null}
-          isAuthenticated={!!userId}
-          onAuthRequired={() => setShowSignInModal(true)}
-          onClose={() => setSelected(null)}
-          currentUserId={userId}
-          onDelete={handleDelete}
-        />
-      )}
       {showSignInModal && (
         <SignInModal
           redirectTo={`/submit?challenge_id=${initialChallenge.id}`}

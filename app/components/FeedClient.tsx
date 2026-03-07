@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { log } from "@/lib/logger";
 import type { Post, FeedSort, VoteType } from "@/lib/types";
 import { useAuth } from "./AuthProvider";
 import { PostCard } from "./PostCard";
-import { PostModal } from "./PostModal";
 import { SignInModal } from "./SignInModal";
 
 const PAGE_SIZE = 25;
@@ -30,11 +30,11 @@ export default function FeedClient({
   const [sort, setSort] = useState<FeedSort>(initialSort);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialPosts.length >= PAGE_SIZE);
-  const [selected, setSelected] = useState<Post | null>(null);
   const [userVotes, setUserVotes] = useState<Record<string, VoteType>>({});
   const [showSignInModal, setShowSignInModal] = useState(false);
   const { user } = useAuth();
   const userId = user?.id ?? null;
+  const router = useRouter();
 
   const supabase = createClient();
 
@@ -144,7 +144,6 @@ export default function FeedClient({
     const res = await fetch(`/api/posts/${id}`, { method: "DELETE" });
     if (res.ok) {
       setPosts((prev) => prev.filter((p) => p.id !== id));
-      if (selected?.id === id) setSelected(null);
     }
   };
 
@@ -214,7 +213,7 @@ export default function FeedClient({
               userVote={userVotes[post.id] ?? null}
               isAuthenticated={!!userId}
               onAuthRequired={handleAuthRequired}
-              onClick={() => setSelected(post)}
+              onClick={() => router.push(`/post/${post.id}`)}
               currentUserId={userId}
               onDelete={handleDelete}
             />
@@ -236,17 +235,6 @@ export default function FeedClient({
       )}
 
       {/* Modal */}
-      {selected && (
-        <PostModal
-          post={selected}
-          userVote={userVotes[selected.id] ?? null}
-          isAuthenticated={!!userId}
-          onAuthRequired={handleAuthRequired}
-          onClose={() => setSelected(null)}
-          currentUserId={userId}
-          onDelete={handleDelete}
-        />
-      )}
     </div>
   );
 }
