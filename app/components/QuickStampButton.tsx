@@ -43,7 +43,7 @@ function makeAsciiStamp(tierName: string, score: number, emoji: string, roast: s
     "",
     `"${roast}"`,
     "",
-    `🗑️ ${url}`,
+    `✅ AI Slop Certified | ${url}`,
     sep,
   ];
   return lines.join("\n");
