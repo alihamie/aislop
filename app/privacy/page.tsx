@@ -17,12 +17,12 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-lg font-bold text-white mb-2">What We Don't Do</h2>
-          <p>We do not sell your data. We do not share your personal information with third parties except as required to operate the service (authentication via Google, hosting via Vercel, database via Supabase).</p>
+          <p>We do not sell your data. We do not share your personal information with third parties except as required to operate the service (authentication via Google).</p>
         </section>
 
         <section>
           <h2 className="text-lg font-bold text-white mb-2">Data Retention</h2>
-          <p>You may delete your posts at any time from your profile page. To request full account deletion, contact us at <a href="mailto:hello@aislophub.ai" className="text-yellow-400 hover:underline">hello@aislophub.ai</a>.</p>
+          <p>You may delete your posts at any time from your profile page. To request full account deletion, contact us at <a href="mailto:alihhamie@gmail.com" className="text-yellow-400 hover:underline">alihhamie@gmail.com</a>.</p>
         </section>
 
         <section>
@@ -32,7 +32,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-lg font-bold text-white mb-2">Contact</h2>
-          <p>Questions? Email <a href="mailto:hello@aislophub.ai" className="text-yellow-400 hover:underline">hello@aislophub.ai</a>.</p>
+          <p>Questions? Email <a href="mailto:alihhamie@gmail.com" className="text-yellow-400 hover:underline">alihhamie@gmail.com</a>.</p>
         </section>
       </div>
     </div>

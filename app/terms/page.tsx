@@ -37,7 +37,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-lg font-bold text-white mb-2">Contact</h2>
-          <p>Questions? Email <a href="mailto:hello@aislophub.ai" className="text-yellow-400 hover:underline">hello@aislophub.ai</a>.</p>
+          <p>Questions? Email <a href="mailto:alihhamie@gmail.com" className="text-yellow-400 hover:underline">alihhamie@gmail.com</a>.</p>
         </section>
       </div>
     </div>
