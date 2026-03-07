@@ -1,14 +1,13 @@
 "use client";
 
-import { Post, getSlopColor, timeAgo } from "@/lib/types";
+import { Post, getSlopColor, timeAgo, ReactionType, ReactionCounts, getBlendedScore } from "@/lib/types";
 import { QuickStampButton } from "./QuickStampButton";
 import { SlopMeter } from "./SlopMeter";
-import { VoteButtons } from "./VoteButtons";
-import type { VoteType } from "@/lib/types";
+import { ReactionButtons } from "./ReactionButtons";
 
 interface PostCardProps {
   post: Post;
-  userVote: VoteType | null;
+  userReaction: ReactionType | null;
   isAuthenticated: boolean;
   onAuthRequired: () => void;
   onClick: () => void;
@@ -18,7 +17,7 @@ interface PostCardProps {
 
 export function PostCard({
   post,
-  userVote,
+  userReaction,
   isAuthenticated,
   onAuthRequired,
   onClick,
@@ -26,9 +25,18 @@ export function PostCard({
   onDelete,
 }: PostCardProps) {
   const username = post.username || post.profiles?.username || "Anonymous";
-  const slopColor = getSlopColor(post.slop_score);
+  const reactionCounts: ReactionCounts = {
+    not_slop: post.not_slop_count ?? 0,
+    slop: post.slop_count ?? 0,
+    filthy: post.filthy_count ?? 0,
+    garbage: post.garbage_count ?? 0,
+    total: post.total_reactions ?? 0,
+  };
+  const displayScore = getBlendedScore(post.slop_score, reactionCounts);
+  const hasCommunityBoost = displayScore !== post.slop_score;
+  const slopColor = getSlopColor(displayScore);
   const tilt = post.slop_score % 3 === 0 ? "-rotate-[0.5deg]" : post.slop_score % 3 === 1 ? "rotate-[0.5deg]" : "rotate-[0deg]";
-  const isLegendary = post.slop_score > 80;
+  const isLegendary = displayScore > 80;
 
   return (
     <div
@@ -83,7 +91,12 @@ export function PostCard({
 
       {/* Slop meter */}
       <div className="mb-3">
-        <SlopMeter score={post.slop_score} size="sm" />
+        <SlopMeter score={displayScore} size="sm" />
+        {hasCommunityBoost && (
+          <p className="text-[10px] text-zinc-500 mt-1">
+            AI: {post.slop_score}% · Community adjusted: {displayScore}%
+          </p>
+        )}
       </div>
 
       {/* AI Roast — prominent verdict */}
@@ -97,28 +110,29 @@ export function PostCard({
         </p>
       </div>
 
-      {/* Source link + votes row */}
-      <div className="flex items-center justify-between gap-2">
-        <VoteButtons
-          postId={post.id}
-          upvotes={post.upvotes}
-          downvotes={post.downvotes}
-          userVote={userVote}
-          isAuthenticated={isAuthenticated}
-          onAuthRequired={onAuthRequired}
-        />
-        {post.source_url && (
+      {/* Reactions */}
+      <ReactionButtons
+        postId={post.id}
+        counts={reactionCounts}
+        userReaction={userReaction}
+        isAuthenticated={isAuthenticated}
+        onAuthRequired={onAuthRequired}
+      />
+
+      {/* Source link */}
+      {post.source_url && (
+        <div className="mt-2">
           <a
             href={post.source_url}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1 text-[11px] text-zinc-500 hover:text-zinc-300 transition-colors shrink-0"
+            className="flex items-center gap-1 text-[11px] text-zinc-500 hover:text-zinc-300 transition-colors"
           >
             🔗 source
           </a>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

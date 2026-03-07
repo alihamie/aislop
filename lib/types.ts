@@ -10,6 +10,28 @@ export type SlopTier =
   | "LEGENDARY FILTH 🗑️👑";
 
 export type VoteType = "slop" | "clean";
+export type ReactionType = "not_slop" | "slop" | "filthy" | "garbage";
+
+export interface ReactionCounts {
+  not_slop: number;
+  slop: number;
+  filthy: number;
+  garbage: number;
+  total: number;
+}
+
+export function getBlendedScore(aiScore: number, counts: ReactionCounts): number {
+  if (counts.total < 3) return aiScore; // not enough reactions yet
+  const communityAvg = (
+    counts.not_slop * 0 +
+    counts.slop * 50 +
+    counts.filthy * 80 +
+    counts.garbage * 100
+  ) / counts.total;
+  // Community influence scales up to 30% at 10+ reactions
+  const communityWeight = Math.min(counts.total / 10, 1) * 0.3;
+  return Math.round(aiScore * (1 - communityWeight) + communityAvg * communityWeight);
+}
 
 export type FeedSort = "hot" | "fresh" | "most_slopped";
 
@@ -31,9 +53,7 @@ export interface Post {
   downvotes: number;
   created_at: string;
   // Joined from profiles
-  profiles?: {
-    username: string;
-  };
+  profiles?: { username: string };
   // Computed (from RPC)
   username?: string;
   hot_score?: number;
@@ -41,6 +61,12 @@ export interface Post {
   // Challenge association
   challenge_id?: string | null;
   source_url?: string | null;
+  // Reaction counts (from RPC)
+  not_slop_count?: number;
+  slop_count?: number;
+  filthy_count?: number;
+  garbage_count?: number;
+  total_reactions?: number;
 }
 
 export interface Vote {

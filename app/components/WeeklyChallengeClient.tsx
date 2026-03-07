@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
-import type { Challenge, ChallengeWithWinner, Post, VoteType } from "@/lib/types";
+import type { Challenge, ChallengeWithWinner, Post, ReactionType } from "@/lib/types";
 import { getSlopColor, timeAgo } from "@/lib/types";
 import { PostCard } from "./PostCard";
 import { SignInModal } from "./SignInModal";
@@ -32,7 +32,7 @@ export function WeeklyChallengeClient({ initialChallenge, initialPosts }: Props)
   const [posts, setPosts]             = useState<Post[]>(initialPosts);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore]         = useState(initialPosts.length >= PAGE_SIZE);
-  const [userVotes, setUserVotes]     = useState<Record<string, VoteType>>({});
+  const [userReactions, setUserReactions] = useState<Record<string, ReactionType>>({});
 
   // ── Winners state ──────────────────────────────────────────
   const [winners, setWinners]               = useState<ChallengeWithWinner[] | null>(null);
@@ -48,15 +48,15 @@ export function WeeklyChallengeClient({ initialChallenge, initialPosts }: Props)
     async (postIds: string[]) => {
       if (!userId || postIds.length === 0) return;
       const { data } = await supabase
-        .from("votes")
-        .select("post_id, vote_type")
+        .from("reactions")
+        .select("post_id, reaction_type")
         .eq("user_id", userId)
         .in("post_id", postIds);
       if (data) {
-        setUserVotes((prev) => {
+        setUserReactions((prev) => {
           const updated = { ...prev };
-          data.forEach((v: { post_id: string; vote_type: string }) => {
-            updated[v.post_id] = v.vote_type as VoteType;
+          data.forEach((r: { post_id: string; reaction_type: string }) => {
+            updated[r.post_id] = r.reaction_type as ReactionType;
           });
           return updated;
         });
@@ -219,7 +219,7 @@ export function WeeklyChallengeClient({ initialChallenge, initialPosts }: Props)
                   </div>
                   <PostCard
                     post={post}
-                    userVote={userVotes[post.id] ?? null}
+                    userReaction={userReactions[post.id] ?? null}
                     isAuthenticated={!!userId}
                     onAuthRequired={() => setShowSignInModal(true)}
                     onClick={() => router.push(`/post/${post.id}`)}
