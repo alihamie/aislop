@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import type { Challenge, ChallengeWithWinner, Post, VoteType } from "@/lib/types";
 import { getSlopColor, timeAgo } from "@/lib/types";
@@ -24,7 +23,6 @@ export function WeeklyChallengeClient({ initialChallenge, initialPosts }: Props)
   const router = useRouter();
   const { user } = useAuth();
   const userId = user?.id ?? null;
-  const router = useRouter();
   const supabase = createClient();
 
   // ── Tabs ──────────────────────────────────────────────────
