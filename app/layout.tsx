@@ -63,7 +63,7 @@ export default function RootLayout({
             </div>
           </header>
           <main className="max-w-3xl mx-auto px-4 py-8 pb-24 sm:pb-8">{children}</main>
-          <footer className="border-t border-zinc-800 mt-16 py-6 text-center text-zinc-600 text-sm">
+          <footer className="border-t border-zinc-800 mt-16 py-6 pb-24 sm:pb-6 text-center text-zinc-600 text-sm">
             <p className="mb-2">AI Slop — where AI slop goes to be judged and celebrated 🗑️👑</p>
             <div className="flex items-center justify-center gap-4 text-xs">
               <Link href="/privacy" className="hover:text-zinc-400 transition-colors">Privacy Policy</Link>
