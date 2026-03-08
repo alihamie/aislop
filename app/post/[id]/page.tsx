@@ -67,6 +67,18 @@ export default async function PostPage({
 
   const username = post.profiles?.username || "Anonymous";
   const slopColor = getSlopColor(post.slop_score);
+  const canonicalUrl = `https://aislophub.ai/post/${post.id}`;
+
+  const postSchema = {
+    "@context": "https://schema.org",
+    "@type": "SocialMediaPosting",
+    "headline": post.title ?? `AI Slop — ${post.slop_score}% Slop`,
+    "text": post.content?.slice(0, 500),
+    "datePublished": post.created_at,
+    "author": { "@type": "Person", "name": username },
+    "url": canonicalUrl,
+    "publisher": { "@type": "Organization", "name": "AISlop Hub", "url": "https://aislophub.ai" },
+  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -77,6 +89,7 @@ export default async function PostPage({
         ← Back to feed
       </Link>
 
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(postSchema) }} />
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden mt-4">
         {/* Header */}
         <div className="p-5 border-b border-zinc-800 flex items-center justify-between">

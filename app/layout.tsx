@@ -43,6 +43,16 @@ export default function RootLayout({
       <body
         className={`${inter.className} bg-zinc-950 text-zinc-100 min-h-screen`}
       >
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "AISlop Hub",
+          "url": "https://aislophub.ai",
+          "description": "Submit AI-generated content, get roasted by the Slop Judge, and let the community vote. The sloppier, the better.",
+          "applicationCategory": "EntertainmentApplication",
+          "operatingSystem": "Web",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        }) }} />
         <AuthProvider>
           <header className="sticky top-0 z-20 bg-zinc-950/95 backdrop-blur border-b border-zinc-800">
             <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
