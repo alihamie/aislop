@@ -86,7 +86,7 @@ export function SlopStampButton({ postId, score, roast }: SlopStampButtonProps) 
         title="Share Slop Stamp image"
       >
         <span>{status === "done" ? "✅" : "🗑️"}</span>
-        <span>{status === "loading" ? "Loading..." : "Image"}</span>
+        <span>{status === "loading" ? "Loading..." : "Slop Stamp"}</span>
       </button>
 
       {/* Text stamp */}
@@ -96,7 +96,7 @@ export function SlopStampButton({ postId, score, roast }: SlopStampButtonProps) 
         title="Copy text stamp"
       >
         <span>📋</span>
-        <span>Text</span>
+        <span>Slop Text</span>
       </button>
     </div>
   );
