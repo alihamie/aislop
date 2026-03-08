@@ -71,7 +71,9 @@ export function SlopStampButton({ postId, score, roast }: SlopStampButtonProps) 
   };
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="space-y-1.5">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Share your Slop Stamp</p>
+      <div className="flex items-center gap-1">
       {/* Image stamp */}
       <button
         onClick={handleShare}
@@ -98,6 +100,7 @@ export function SlopStampButton({ postId, score, roast }: SlopStampButtonProps) 
         <span>📋</span>
         <span>Slop Text</span>
       </button>
+      </div>
     </div>
   );
 }
