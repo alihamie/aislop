@@ -27,7 +27,13 @@ export default function FeedClient({
   initialSort,
 }: FeedClientProps) {
   const [posts, setPosts] = useState<Post[]>(initialPosts);
-  const [sort, setSort] = useState<FeedSort>(initialSort);
+  const [sort, setSort] = useState<FeedSort>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("feedSort") as FeedSort | null;
+      if (saved && ["hot", "fresh", "most_slopped"].includes(saved)) return saved;
+    }
+    return initialSort;
+  });
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialPosts.length >= PAGE_SIZE);
   const [userReactions, setUserReactions] = useState<Record<string, ReactionType>>({});
@@ -74,6 +80,7 @@ export default function FeedClient({
   const handleTabChange = async (newSort: FeedSort) => {
     if (newSort === sort) return;
     setSort(newSort);
+    localStorage.setItem("feedSort", newSort);
     setLoading(true);
     const data = await fetchPosts(newSort);
     setPosts(data);
