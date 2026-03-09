@@ -40,9 +40,41 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}&omit_script=true`;
+  // Extract tweet ID from URL path
+  const tweetIdMatch = parsed.pathname.match(/\/status\/(\d+)/);
+  const tweetId = tweetIdMatch?.[1];
+
+  if (!tweetId) {
+    return NextResponse.json({ error: "Could not extract tweet ID from URL." }, { status: 400 });
+  }
 
   try {
+    // Try syndication API first — returns full untruncated text, no auth needed
+    const syndicationUrl = `https://cdn.syndication.twimg.com/tweet-result?id=${tweetId}&lang=en&features=tfw_timeline_list%3A%3Btfw_follower_count_sunset%3Atrue`;
+    const synRes = await fetch(syndicationUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; AISlop/1.0)",
+        "Referer": "https://platform.twitter.com/",
+      },
+    });
+
+    if (synRes.ok) {
+      const synData = await synRes.json();
+      // Full text is in `text` field; thread/quoted tweets in `quoted_tweet`
+      const fullText: string = synData?.text ?? synData?.full_text ?? "";
+      const author: string = synData?.user?.name ?? synData?.core?.user_results?.result?.legacy?.name ?? "";
+
+      if (fullText) {
+        const text = fullText
+          .replace(/https?:\/\/t\.co\/\S+/g, "")  // strip t.co links
+          .replace(/\s{2,}/g, " ")
+          .trim();
+        return NextResponse.json({ text, author });
+      }
+    }
+
+    // Fallback: oEmbed (truncated but better than nothing)
+    const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}&omit_script=true`;
     const res = await fetch(oembedUrl, {
       headers: { "User-Agent": "AISlop/1.0" },
     });
@@ -56,24 +88,18 @@ export async function GET(req: NextRequest) {
 
     const data = await res.json();
     const html: string = data.html ?? "";
-
-    // Extract just the tweet body from inside the <p> tag
     const pMatch = html.match(/<p[^>]*>([\s\S]*?)<\/p>/i);
     const rawText = pMatch ? pMatch[1] : html;
 
     const text = stripHtml(rawText)
-      // Remove pic.twitter.com/xxx media links
       .replace(/pic\.twitter\.com\/\S+/g, "")
-      // Remove t.co shortened URLs (media attachments at end of tweet)
       .replace(/https?:\/\/t\.co\/\S+/g, "")
-      // Remove trailing "…" truncation marker
       .replace(/…\s*$/, "")
       .replace(/\s{2,}/g, " ")
       .trim();
 
     const author = (data.author_name as string | undefined) ?? "";
-
-    return NextResponse.json({ text, author });
+    return NextResponse.json({ text, author, truncated: true });
   } catch {
     return NextResponse.json({ error: "Failed to fetch tweet" }, { status: 500 });
   }
