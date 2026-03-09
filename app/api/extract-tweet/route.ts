@@ -55,7 +55,22 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await res.json();
-    const text = stripHtml(data.html ?? "");
+    const html: string = data.html ?? "";
+
+    // Extract just the tweet body from inside the <p> tag
+    const pMatch = html.match(/<p[^>]*>([\s\S]*?)<\/p>/i);
+    const rawText = pMatch ? pMatch[1] : html;
+
+    const text = stripHtml(rawText)
+      // Remove pic.twitter.com/xxx media links
+      .replace(/pic\.twitter\.com\/\S+/g, "")
+      // Remove t.co shortened URLs (media attachments at end of tweet)
+      .replace(/https?:\/\/t\.co\/\S+/g, "")
+      // Remove trailing "…" truncation marker
+      .replace(/…\s*$/, "")
+      .replace(/\s{2,}/g, " ")
+      .trim();
+
     const author = (data.author_name as string | undefined) ?? "";
 
     return NextResponse.json({ text, author });
