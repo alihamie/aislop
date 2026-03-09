@@ -317,7 +317,7 @@ function WinnerCard({ challenge }: { challenge: ChallengeWithWinner }) {
       </div>
 
       {post ? (
-        <div className="border border-zinc-700 rounded-xl p-4 bg-zinc-800/50">
+        <a href={`/post/${post.id}`} className="block border border-zinc-700 rounded-xl p-4 bg-zinc-800/50 hover:border-yellow-400/40 hover:bg-zinc-800 transition-colors cursor-pointer">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <div className="w-7 h-7 rounded-full bg-zinc-700 flex items-center justify-center text-sm font-black">
               {username[0]?.toUpperCase() ?? "?"}
@@ -344,7 +344,8 @@ function WinnerCard({ challenge }: { challenge: ChallengeWithWinner }) {
               </p>
             </div>
           )}
-        </div>
+          <p className="text-xs text-zinc-600 mt-3">View full post →</p>
+        </a>
       ) : (
         <p className="text-zinc-600 text-sm italic">No entries were submitted this week.</p>
       )}
