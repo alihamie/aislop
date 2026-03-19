@@ -15,7 +15,29 @@ export async function GET(req: NextRequest) {
   }
 
   const validHosts = ["reddit.com", "www.reddit.com"];
-  if (!validHosts.includes(parsed.hostname) || !parsed.pathname.includes("/comments/")) {
+  if (!validHosts.includes(parsed.hostname)) {
+    return NextResponse.json(
+      { error: "URL must be a Reddit post (reddit.com)" },
+      { status: 400 }
+    );
+  }
+
+  // Resolve Reddit share links (/s/XXXXX) by following the redirect
+  let resolvedPathname = parsed.pathname;
+  if (parsed.pathname.startsWith("/r/") && parsed.pathname.includes("/s/")) {
+    try {
+      const redirectRes = await fetch(`https://www.reddit.com${parsed.pathname}`, {
+        headers: { "User-Agent": "AISlop/1.0" },
+        redirect: "follow",
+      });
+      const resolvedUrl = new URL(redirectRes.url);
+      resolvedPathname = resolvedUrl.pathname;
+    } catch {
+      return NextResponse.json({ error: "Could not resolve Reddit share link." }, { status: 500 });
+    }
+  }
+
+  if (!resolvedPathname.includes("/comments/")) {
     return NextResponse.json(
       { error: "URL must be a Reddit post (reddit.com with /comments/ in path)" },
       { status: 400 }
@@ -23,7 +45,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Normalize: strip trailing slash, append .json
-  const normalized = parsed.pathname.replace(/\/$/, "") + ".json";
+  const normalized = resolvedPathname.replace(/\/$/, "") + ".json";
   const jsonUrl = `https://www.reddit.com${normalized}`;
 
   try {
