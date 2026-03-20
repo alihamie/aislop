@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   const validHosts = ["reddit.com", "www.reddit.com"];
   if (!validHosts.includes(parsed.hostname)) {
     return NextResponse.json(
-      { error: "URL must be a Reddit post (reddit.com)" },
+      { error: `URL must be a Reddit post (reddit.com) — got hostname: ${parsed.hostname}` },
       { status: 400 }
     );
   }
