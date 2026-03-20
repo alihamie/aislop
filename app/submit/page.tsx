@@ -8,6 +8,7 @@ import { SlopMeter } from "../components/SlopMeter";
 import { SlopStampButton } from "../components/SlopStampButton";
 import { getSlopColor } from "@/lib/types";
 import { useAuth } from "../components/AuthProvider";
+import { normalizeUrl, detectUrlType } from "@/lib/url-utils";
 
 const IS_LOCALHOST =
   typeof window !== "undefined" &&
@@ -37,17 +38,7 @@ interface SubmitResult {
   remaining: number;
 }
 
-function detectUrlType(url: string): "tweet" | "reddit" | "generic" | null {
-  try {
-    const u = new URL(url);
-    if (u.hostname.includes("twitter.com") || u.hostname.includes("x.com")) return "tweet";
-    if (u.hostname.includes("reddit.com")) return "reddit";
-    if (u.protocol === "http:" || u.protocol === "https:") return "generic";
-    return null;
-  } catch {
-    return null;
-  }
-}
+
 
 function SubmitPageContent() {
   const router = useRouter();
@@ -90,8 +81,9 @@ function SubmitPageContent() {
 
   // Auto-fetch when URL changes and is recognizable
   const handleUrlChange = async (val: string) => {
-    setUrl(val);
-    const trimmed = val.trim();
+    const normalized = normalizeUrl(val);
+    setUrl(normalized);
+    const trimmed = normalized.trim();
     if (!trimmed || fetchedUrl.current === trimmed) return;
 
     const type = detectUrlType(trimmed);
