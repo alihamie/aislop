@@ -29,6 +29,28 @@ describe("normalizeUrl", () => {
       "https://reddit.com/r/sub/comments/abc"
     );
   });
+
+  it("handles truncated paste missing https://www.re prefix (ddit.com/...)", () => {
+    expect(normalizeUrl("ddit.com/r/openclaw/s/jw1SUOSoKq")).toBe(
+      "https://www.reddit.com/r/openclaw/s/jw1SUOSoKq"
+    );
+  });
+
+  it("handles reddit.com without protocol", () => {
+    expect(normalizeUrl("reddit.com/r/sub/comments/abc")).toBe(
+      "https://www.reddit.com/r/sub/comments/abc"
+    );
+  });
+
+  it("handles www.reddit.com without protocol", () => {
+    expect(normalizeUrl("www.reddit.com/r/sub/s/XYZ")).toBe(
+      "https://www.reddit.com/r/sub/s/XYZ"
+    );
+  });
+
+  it("prepends https:// to bare domains", () => {
+    expect(normalizeUrl("medium.com/some-article")).toBe("https://medium.com/some-article");
+  });
 });
 
 describe("detectUrlType", () => {
